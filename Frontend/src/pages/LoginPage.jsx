@@ -2,6 +2,9 @@ import { useState } from "react";
 import { Mail, Lock, ArrowRight, Loader2, Leaf } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { UseLogin } from "../api/auth.api";
+import Loader from "../components/Loader";
+import { useGetAllAsset, useGetAllFaculty } from "../api/asset.api";
+import { useGetAllRequest } from "../api/request.api";
 
 
 const LoginForm = () => {
@@ -11,17 +14,33 @@ const LoginForm = () => {
     });
     const { login, loading, error } = UseLogin();
     const navigate = useNavigate();
+    const { getAssets } = useGetAllAsset();
+    const { getRequests } = useGetAllRequest();
+    const { getFaculty } = useGetAllFaculty();
+
     const HandleSubmit = async (formData) => {
-        console.log(formData);
         const response = await login(formData.email, formData.password);
-        if(response?.success){
-            navigate("/");
+        console.log("response ", response);
+        if (response?.success) {
+
+            if (response?.user?.role === "Principal") {
+                navigate("/principal/dashboard");
+            } else if (response?.user?.role === "HOD") {
+                navigate("/hod/dashboard");
+               await Promise.all([ getAssets(),  getRequests(),  getFaculty()])
+                
+            }else{
+                navigate("/login");
+            }
         }
         console.log(response);
         console.log(error);
-        
 
 
+
+    }
+    if (loading) {
+        return <Loader />
     }
     return (
 

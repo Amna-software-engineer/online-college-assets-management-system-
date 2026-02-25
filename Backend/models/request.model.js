@@ -1,16 +1,25 @@
 import mongoose from 'mongoose';
+import userModel from './user.model.js'
 
 const requestSchema = new mongoose.Schema({
-    RequestorName: { type: String, required: true },
-    department: { type: String, required: true },
+    RequestorId: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: "userModel",
+        required: true },
+    department: { 
+        type: String, 
+        enum: ["CS", "Maths", "Physics","Botany"],
+        required: true },
     status: { 
         type: String,
         enum: ["Pending", "Approved", "Rejected"], 
-        required: true },
-    itemName: { type: Boolean, required: true },
-    quantity:{type: Number},
+        default: "Pending"
+    },
+    itemName: { type: String, required: true },
+    priority:{ type: String, enum: ["Low", "Medium", "High"], required: true },
+    quantity:{type: Number, required: true},
     
-})
+},{timestamps:true})
 
 const model = mongoose.model("requestModel", requestSchema);
 export default model;

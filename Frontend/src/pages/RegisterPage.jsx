@@ -2,6 +2,7 @@ import { Building2, CheckCircle2, ChevronDown, Lock, Mail, ShieldCheck, User } f
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useRegister } from "../api/auth.api";
+import Loader from "../components/Loader";
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -11,15 +12,18 @@ const RegisterPage = () => {
     role: "",
     department: ""
   });
-  const {register,loading,error}= useRegister();
-      const navigate = useNavigate();
+  const { register, loading } = useRegister();
+  const navigate = useNavigate();
   const HandleSubmit = async (formData) => {
-    const response= await register(formData);
+    const response = await register(formData);
     if (response?.success) {
       navigate("/login")
     }
     console.log(formData);
-    
+
+  }
+  if (loading) {
+    return <Loader />
   }
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#F1F5F9] font-sans p-6">
@@ -84,10 +88,11 @@ const RegisterPage = () => {
                 onChange={(e) => (setFormData({ ...formData, department: e.target.value }))}
                 className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:border-[#0088A8] text-sm font-bold text-slate-700 appearance-none cursor-pointer"
               >
-                <option value="cs">Computer Science</option>
-                <option value="physics">Physics Department</option>
-                <option value="botany">Botany Department</option>
-                <option value="maths">Maths Department</option>
+                {/* enum: ["CS", "Maths", "Physics"] */}
+                <option value="CS">Computer Science</option>
+                <option value="Physics">Physics Department</option>
+                <option value="Botany">Botany Department</option>
+                <option value="Maths">Maths Department</option>
               </select>
               {/* Dropdown arrow icon (Optional but recommended for appearance-none) */}
               <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300">

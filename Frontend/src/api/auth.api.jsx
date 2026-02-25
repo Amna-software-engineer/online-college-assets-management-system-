@@ -29,6 +29,7 @@ export const UseLogin = () => {
             const message = error?.response?.data?.message || error?.message || "Login failed";
             setError(message);
             toast.error(message);
+            return null;
         }
         finally {
             setLoading(false)
@@ -39,16 +40,17 @@ export const UseLogin = () => {
 }
 
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useRegister = () => {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
-    const dispatch = useDispatch();
+
     const register = async (formData) => {
         try {
             setLoading(true);
             setError(null);
             const response = await baseApi.post(authEndPoints.register,  formData );
-            if (response.data) {
+            if (response?.data) {
                 toast.success("Registered successfully");
                 return response.data;
             }
@@ -57,6 +59,7 @@ export const useRegister = () => {
             const message = error?.response?.data?.message || error?.message || "Register failed";
             setError(message);
             toast.error(message);
+            return null;
         }
         finally {
             setLoading(false)

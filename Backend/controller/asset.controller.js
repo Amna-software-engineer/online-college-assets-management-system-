@@ -1,0 +1,165 @@
+import assetModel from "../models/asset.model.js";
+import jwt, { decode } from "jsonwebtoken";
+import userModel from '../models/user.model.js'
+
+const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || "some_random_secret_key_for_access_token";
+
+
+
+export const createAsset = async (req, res) => {
+    const { name, category, price, quantity, assignedTo, department, condition } = req.body;
+    console.log(req.body);
+    
+    try {
+        if (!name || !category || !price || !quantity || !department || !condition) {
+            return res.status(400).json({ success: false, message: "All fields are required!" });
+        }
+
+        // 1. Check if same asset exists in Main Store (assignedTo: null)
+        let existingAsset = await assetModel.findOne({
+            name,
+            condition,
+            department,
+            assignedTo: null 
+        });
+
+        if (existingAsset) {
+            // Logic: Existing stock mein quantity add karein aur history record karein
+            existingAsset.quantity += Number(quantity);
+            
+            existingAsset.history.push({
+                action: "Stock Updated",
+                quantity: Number(quantity),
+                note: `Additional ${quantity} units added to stock by Principal.`,
+                date: new Date()
+            });
+
+            await existingAsset.save();
+            return res.status(200).json({
+                success: true,
+                message: "Stock updated for existing asset!",
+                asset: existingAsset
+            });
+        }
+
+        // 2. Create New Asset if it doesn't exist
+        const newAsset = await assetModel.create({
+            name,
+            category,
+            price,
+            quantity: Number(quantity),
+            assignedTo: assignedTo || null, 
+            department,
+            condition,
+            status: assignedTo ? "Assigned" : "Available", // Agar assignedTo hai to status badal jaye
+            history: [{
+                action: "Initial Purchase",
+                quantity: Number(quantity),
+                note: assignedTo 
+                    ? `Asset created and directly assigned.` 
+                    : `Initial stock added to Main Store by Principal.`,
+                date: new Date()
+            }]
+        });
+
+        return res.status(201).json({ 
+            success: true, 
+            message: "Asset created successfully!", 
+            asset: newAsset 
+        });
+
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Error creating asset", error: error.message });
+    }
+};
+// transfer asset from one faculty to another or from store to faculty
+export const updateAsset = async (req, res) => {
+    const { assetId, quantity, assignedTo, condition } = req.body;
+
+    // 1. Validation
+    if (!assetId || !quantity || !assignedTo || !condition) {
+        return res.status(400).json({ success: false, message: "All fields are required!" });
+    }
+
+    try {
+        const originalAsset = await assetModel.findById(assetId).populate('assignedTo');
+        
+        if (!originalAsset) {
+            return res.status(404).json({ success: false, message: "Asset not found!" });
+        }
+
+        // 2.  Check Quantity available 
+        if (originalAsset.quantity < quantity) {
+            return res.status(400).json({ success: false, message: "Not enough quantity in stock!" });
+        }
+
+        // 3. Update Original Asset (The Source)
+        // Hum source asset ki quantity kam karenge aur uski history mein record daalenge
+        originalAsset.quantity -= quantity;
+        originalAsset.history.push({
+            action: "Transfer Out",
+            quantity: quantity,
+            note: `Transferred ${quantity} units to new custodian.`,
+            date: new Date()
+        });
+        await originalAsset.save();
+
+        // 4. Create/Update Transferred Asset (The Destination)
+        // Hum naya entry create kar rahe hain jo "Assigned" status mein hoga
+        const transferredAsset = await assetModel.create({
+            name: originalAsset.name,
+            category: originalAsset.category,
+            price: originalAsset.price,
+            quantity: quantity,
+            assignedTo: assignedTo, // ID of the faculty receiving it
+            department: originalAsset.department,
+            condition: condition,
+            status: "Assigned",
+            // Naye asset ki history mein hum "Transfer In" record karenge
+            history: [{
+                action: "Transfer In",
+                quantity: quantity,
+                note: `Received from ${originalAsset.assignedTo?.name || "Main Store"}`,
+                date: new Date()
+            }]
+        });
+
+        return res.status(201).json({ 
+            success: true, 
+            message: "Asset Transferred Successfully!", 
+            transferredAsset, 
+            originalAsset 
+        });
+
+    } catch (error) {
+        console.error("Transfer Error:", error);
+        res.status(500).json({ success: false, message: "Error during transfer", error: error.message });
+    }
+};
+
+export const getAssets = async (req, res) => {
+    const authHeader = req.headers.authorization;
+    const token = authHeader && authHeader.split(" ")[1];
+    const decoded = jwt.verify(token, JWT_ACCESS_SECRET);
+    console.log('decoded', decoded);
+
+    try {
+        let assetList = [];
+        // enum: ["CS", "Maths", "Physics"]
+
+        if (decoded.role === "HOD") {
+            assetList = await assetModel.find({ department: decoded.department }).populate("assignedTo", "name email");
+            assetList = assetList.filter(asset => asset.quantity > 0); // HOD ko apne assigned assets nahi dikhane
+            console.log("assetList hod", assetList);
+        } else if (decoded.role === "Principal") {
+            assetList = await assetModel.find().populate("assignedTo", "name email");
+            console.log("assetList principal", assetList);
+        }
+        console.log("assetList", assetList);
+
+        res.status(200).json({ success: true, message: "Assets fetched successfully!", assetList });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Error fetching assets", error: error.message });
+    }
+}
+
