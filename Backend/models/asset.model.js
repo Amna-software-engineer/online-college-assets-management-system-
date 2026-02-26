@@ -2,8 +2,7 @@ import mongoose from 'mongoose';
 
 const historySchema = new mongoose.Schema({
     action: { type: String, 
-        // enum: ["Transferred", "Status Changed", "Quantity Added"], 
-        required: true }, // e.g., "Transferred", "Status Changed", "Quantity Added"
+        required: true }, // e.g., "Transfered In", "Transfered Out", "Stock Updated","Initial Purchase"
     user: { type: mongoose.Schema.Types.ObjectId, ref: "userModel" }, // Who got it?
     quantity: { type: Number },
     date: { type: Date, default: Date.now },

@@ -40,6 +40,7 @@ const HODManageAssets = () => {
   const { assetsList } = useSelector(state => state?.assets);
   const { facultyList } = useSelector(state => state?.faculty);
   const [activeFacultyFilter, setActiveFacultyFilter] = useState(null);
+  const [assetDistribution, setAssetDistribution] = useState({ totalUnits: 0, assignedUnits: 0, availableUnits: 0 });
 
 
   // category data
@@ -80,6 +81,16 @@ const HODManageAssets = () => {
     // toast.success(`${asset.name}'s Details Loaded`);
   };
 
+  const calculateAssetDistribtuion = (asset) => {
+    const totalUnits=  assetsList?.filter(a=> a.name === asset.name && a.category === asset.category ).reduce((total, curr) => total + (curr?.quantity || 0), 0) || 0;
+    const assignedUnits=  assetsList?.filter(a=> a.name === asset.name && a.category === asset.category && a.assignedTo).reduce((total, curr) => total + (curr?.quantity || 0), 0) || 0;
+    console.log("total units ",totalUnits,assignedUnits);
+    const availableUnits = totalUnits - assignedUnits;
+   setAssetDistribution({ totalUnits, assignedUnits, availableUnits });
+    
+    // total units, assigned units, available units
+  };
+ ;
   const handleTransferAsset = (asset) => {
     console.log("asset tran ass", asset);
     setSelectedAsset(asset);
@@ -240,7 +251,7 @@ const HODManageAssets = () => {
                   {/* 8. Actions */}
                   <td className="py-5 px-6">
                     <div className="flex items-center justify-center gap-4 text-slate-400 group-hover:text-slate-700 transition-all">
-                      <Eye size={18} onClick={() => handleViewDetails(asset)} className="hover:text-cyan-600 cursor-pointer transition-colors" />
+                      <Eye size={18} onClick={() => { handleViewDetails(asset);  calculateAssetDistribtuion(asset); }} className="hover:text-cyan-600 cursor-pointer transition-colors" />
 
                       <ArrowLeftRight onClick={() => handleTransferAsset(asset)} size={18} className="hover:text-blue-600  hover:scale-110 transition-transform cursor-pointer" />
                       {/* <Trash2 size={18} className="hover:text-red-600 hover:scale-110 transition-transform cursor-pointer" /> */}
@@ -262,10 +273,12 @@ const HODManageAssets = () => {
         </div>
 
 
+           
+
 
               
         {/* Modals Rendering */}
-        <ViewDetailsModal isOpen={showDetails} onClose={() => setShowDetails(false)} asset={selectedAsset} totalUnits={assetsList.filter(a => a._id === selectedAsset?._id)?.[0]?.quantity || 0}  />
+        <ViewDetailsModal isOpen={showDetails} onClose={() => setShowDetails(false)} asset={selectedAsset} assetDistribution={assetDistribution} />
         <RemoveAccessModal isOpen={showRemoveAccesseModal} onClose={() => setShowRemoveAccesseModal(false)} faculty={selectedFaculty} onConfirm={handleRemoveAccessConfirm} />
         <AddFacultyModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
         <TransferAssetModal isOpen={isTransferModelOpen} onClose={() => setIsTransferModelOpen(false)} asset={selectedAsset} facultyList={facultyList} />

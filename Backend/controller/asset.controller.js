@@ -24,7 +24,6 @@ export const createAsset = async (req, res) => {
         });
 
         if (existingAsset) {
-            // Logic: Existing stock mein quantity add karein aur history record karein
             existingAsset.quantity += Number(quantity);
             
             existingAsset.history.push({
@@ -51,7 +50,7 @@ export const createAsset = async (req, res) => {
             assignedTo: assignedTo || null, 
             department,
             condition,
-            status: assignedTo ? "Assigned" : "Available", // Agar assignedTo hai to status badal jaye
+            status: assignedTo ? "Assigned" : "Available", 
             history: [{
                 action: "Initial Purchase",
                 quantity: Number(quantity),
@@ -94,7 +93,7 @@ export const updateAsset = async (req, res) => {
         }
 
         // 3. Update Original Asset (The Source)
-        // Hum source asset ki quantity kam karenge aur uski history mein record daalenge
+        // decrease qunatity and update history 
         originalAsset.quantity -= quantity;
         originalAsset.history.push({
             action: "Transfer Out",
@@ -105,7 +104,6 @@ export const updateAsset = async (req, res) => {
         await originalAsset.save();
 
         // 4. Create/Update Transferred Asset (The Destination)
-        // Hum naya entry create kar rahe hain jo "Assigned" status mein hoga
         const transferredAsset = await assetModel.create({
             name: originalAsset.name,
             category: originalAsset.category,
@@ -115,7 +113,7 @@ export const updateAsset = async (req, res) => {
             department: originalAsset.department,
             condition: condition,
             status: "Assigned",
-            // Naye asset ki history mein hum "Transfer In" record karenge
+            //  "Transfer In" in new asset record karenge
             history: [{
                 action: "Transfer In",
                 quantity: quantity,

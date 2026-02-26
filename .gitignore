@@ -23,7 +23,9 @@ dist-ssr
 *.sln
 *.sw?
 
-*.bat
+
 *.env
 
-dumy data/*
+dumy_data/
+*chart.txt
+*RemoveAccessModal.jsx
