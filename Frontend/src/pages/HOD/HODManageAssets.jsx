@@ -28,7 +28,6 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 const HODManageAssets = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeMenu, setActiveMenu] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTransferModelOpen, setIsTransferModelOpen] = useState(false);
   const [selectedFaculty, setSelectedFaculty] = useState(null);
@@ -36,7 +35,6 @@ const HODManageAssets = () => {
   const [showDetails, setShowDetails] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedAsset, setSelectedAsset] = useState(null);
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const { assetsList } = useSelector(state => state?.assets);
   const { facultyList } = useSelector(state => state?.faculty);
   const [activeFacultyFilter, setActiveFacultyFilter] = useState(null);
@@ -63,34 +61,29 @@ const HODManageAssets = () => {
     { label: 'Assigned', value: assignedUnits, icon: <UserCheck className="text-indigo-600" />, bg: 'bg-indigo-50' },
   ];
   //  Search & Filter
-  const filteredAssets = useMemo(() => {
-    return assetsList?.filter(a => {
-      const matchesSearch = a?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        a?._id?.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesCategory = selectedCategory === "All" || a?.category === selectedCategory;
-      const matchesFacultyFilter = !activeFacultyFilter || (a?.assignedTo && a?.assignedTo._id === activeFacultyFilter);
-      return matchesSearch && matchesCategory && matchesFacultyFilter;
-    });
-  }, [searchTerm, selectedCategory, assetsList, activeFacultyFilter]);
+  const filteredAssets = assetsList?.filter(a => {
+    const matchesSearch = a?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+      || a?._id?.toLowerCase().includes(searchTerm.toLowerCase());//for search by name/id
+    const matchesCategory = selectedCategory === "All" || a?.category === selectedCategory;
+    const matchesFacultyFilter = !activeFacultyFilter || (a?.assignedTo && a?.assignedTo._id === activeFacultyFilter);
+    return matchesSearch && matchesCategory && matchesFacultyFilter;
+  });
 
 
   const handleViewDetails = (asset) => {
     setSelectedAsset(asset);
     setShowDetails(true);
     setActiveMenu(null);
-    // toast.success(`${asset.name}'s Details Loaded`);
   };
 
   const calculateAssetDistribtuion = (asset) => {
-    const totalUnits=  assetsList?.filter(a=> a.name === asset.name && a.category === asset.category ).reduce((total, curr) => total + (curr?.quantity || 0), 0) || 0;
-    const assignedUnits=  assetsList?.filter(a=> a.name === asset.name && a.category === asset.category && a.assignedTo).reduce((total, curr) => total + (curr?.quantity || 0), 0) || 0;
-    console.log("total units ",totalUnits,assignedUnits);
+    const totalUnits = assetsList?.filter(a => a.name === asset.name && a.category === asset.category).reduce((total, curr) => total + (curr?.quantity || 0), 0) || 0;
+    const assignedUnits = assetsList?.filter(a => a.name === asset.name && a.category === asset.category && a.assignedTo).reduce((total, curr) => total + (curr?.quantity || 0), 0) || 0;
+    console.log("total units ", totalUnits, assignedUnits);
     const availableUnits = totalUnits - assignedUnits;
-   setAssetDistribution({ totalUnits, assignedUnits, availableUnits });
-    
-    // total units, assigned units, available units
+    setAssetDistribution({ totalUnits, assignedUnits, availableUnits });
   };
- ;
+  ;
   const handleTransferAsset = (asset) => {
     console.log("asset tran ass", asset);
     setSelectedAsset(asset);
@@ -105,7 +98,7 @@ const HODManageAssets = () => {
 
 
   return (
-    <div className="p-2 lg:p-8 space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* 1. Quick Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((item, i) => (
@@ -251,7 +244,7 @@ const HODManageAssets = () => {
                   {/* 8. Actions */}
                   <td className="py-5 px-6">
                     <div className="flex items-center justify-center gap-4 text-slate-400 group-hover:text-slate-700 transition-all">
-                      <Eye size={18} onClick={() => { handleViewDetails(asset);  calculateAssetDistribtuion(asset); }} className="hover:text-cyan-600 cursor-pointer transition-colors" />
+                      <Eye size={18} onClick={() => { handleViewDetails(asset); calculateAssetDistribtuion(asset); }} className="hover:text-cyan-600 cursor-pointer transition-colors" />
 
                       <ArrowLeftRight onClick={() => handleTransferAsset(asset)} size={18} className="hover:text-blue-600  hover:scale-110 transition-transform cursor-pointer" />
                       {/* <Trash2 size={18} className="hover:text-red-600 hover:scale-110 transition-transform cursor-pointer" /> */}
@@ -273,12 +266,77 @@ const HODManageAssets = () => {
         </div>
 
 
-           
 
 
-              
+
         {/* Modals Rendering */}
-        <ViewDetailsModal isOpen={showDetails} onClose={() => setShowDetails(false)} asset={selectedAsset} assetDistribution={assetDistribution} />
+        <ViewDetailsModal isOpen={showDetails} onClose={() => setShowDetails(false)} title="Asset Details" subTitle={selectedAsset?.name}>
+          <div className="space-y-6">
+            <div className="grid grid-cols-3 gap-4">
+              {/* Category */}
+              <div>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest"> Category </p>
+                <p className="text-sm font-semibold text-slate-800 mt-1"> {selectedAsset?.category} </p>
+              </div>
+            </div>
+
+            {/* Distribution Stats */}
+            <div className="bg-slate-50 rounded-2xl p-5 border border-slate-100">
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4"> Asset Distribution </p>
+              <div className="grid grid-cols-3 gap-4 text-center">
+                <div>
+                  <p className="text-lg font-bold text-slate-800"> {totalUnits} </p>
+                  <p className="text-[10px] font-semibold uppercase text-slate-400 tracking-wider"> Total </p>
+                </div>
+                <div>
+                  <p className="text-lg font-bold text-cyan-600"> {assignedUnits} </p>
+                  <p className="text-[10px] font-semibold uppercase text-slate-400 tracking-wider"> Assigned </p>
+                </div>
+                <div>
+                  <p className="text-lg font-bold text-green-600"> {availableUnits} </p>
+                  <p className="text-[10px] font-semibold uppercase text-slate-400 tracking-wider"> Available </p>
+                </div>
+              </div>
+            </div>
+            {/* Timeline Section */}
+            <div>
+              <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-6"> Activity Timeline </h4>
+              {selectedAsset?.history?.length > 0 ? (
+                <div className="relative border-l-2 border-slate-200 pl-6 space-y-8">
+                  {selectedAsset?.history.map((log, idx) => (
+                    <div key={idx} className="relative">
+                      {/* Dot */}
+                      <div
+                        className={`absolute -left-8.25 top-1 w-4 h-4 rounded-full border-4 border-white shadow
+                            ${log.action === "Initial Purchase"
+                            ? "bg-purple-500"
+                            : log.action === "Stock Updated"
+                              ? "bg-cyan-500"
+                              : log.action === "Transfer Out"
+                                ? "bg-red-500"
+                                : log.action === "Transfer In"
+                                  ? "bg-green-500"
+                                  : "bg-slate-400"
+                          }`}
+                      ></div>
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="text-sm font-semibold text-slate-800"> {log.action} </p>
+                          <p className="text-xs text-slate-500 mt-1"> {log.note} </p>
+                        </div>
+                        <p className="text-xs text-slate-400 whitespace-nowrap ml-4"> {new Date(log.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })} </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-6 bg-slate-50 rounded-2xl border border-slate-100">
+                  <p className="text-sm text-slate-400"> No activity history available </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </ViewDetailsModal>
         <RemoveAccessModal isOpen={showRemoveAccesseModal} onClose={() => setShowRemoveAccesseModal(false)} faculty={selectedFaculty} onConfirm={handleRemoveAccessConfirm} />
         <AddFacultyModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
         <TransferAssetModal isOpen={isTransferModelOpen} onClose={() => setIsTransferModelOpen(false)} asset={selectedAsset} facultyList={facultyList} />
@@ -289,5 +347,3 @@ const HODManageAssets = () => {
 
 
 export default HODManageAssets;
-
-

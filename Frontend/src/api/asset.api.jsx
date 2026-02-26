@@ -66,7 +66,7 @@ export const useAddAsset = () => {
 
     return { addAsset, loading, error }
 }
-// custome hook to transfer asset 
+// custome hook to transfer asset -- update/edit
 export const useTransferAsset = () => {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)

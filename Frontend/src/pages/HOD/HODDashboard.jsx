@@ -40,7 +40,7 @@ const HODDashboard = () => {
     const activityLog = [
         ...requestList?.map(req => (
             {
-                type: 'Requested', asset: req.itemName, user: `Prof. ${req.RequestorId?.name}`, time: formatDistanceToNow(new Date(req?.createdAt), { addSuffix: true }), color: 'text-blue-600 bg-blue-50'
+                type: 'Requested', asset: req?.itemName, user: `Prof. ${req?.RequestorId?.name}`, time: formatDistanceToNow(new Date(req?.createdAt), { addSuffix: true }), color: 'text-blue-600 bg-blue-50'
             }
         )),
         ...assetsList?.map(asset => ({

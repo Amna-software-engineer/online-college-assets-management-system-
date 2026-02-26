@@ -4,16 +4,23 @@ import jwt, { decode } from "jsonwebtoken";
 const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || "some_random_secret_key_for_access_token";
 
 export const createRequest = async (req, res) => {
-    const { RequestorId,department,itemName,quantity, priority } = req.body;
+    console.log("req.body",req.body);
+    
+    const { RequestorId,department,itemName,quantity,category,priority,specifications,reason } = req.body;
+
     try {
-        if (!RequestorId || !department || !itemName || !quantity || !priority) {   
+        if (!RequestorId || !department || !itemName || !quantity || !priority || !category || !specifications ) {   
             return res.status(400).json({ success: false, message: "All fields are required!" });
         }
-        const newRequest = await requestModel.create({ RequestorId, department, itemName, quantity, priority });
+        const newRequest = await requestModel.create({ RequestorId, department, itemName, quantity, priority, category, specifications, reason:  reason || "" });
+        console.log(newRequest);
+        
         if (newRequest) {
             return res.status(201).json({ success: true, message: "Request created successfully!", request: newRequest });
         }   
     } catch (error) {
+        console.log("Error creating request:", error);
+        
         res.status(500).json({ success: false, message: "Error creating request", error: error.message });
     }   
 };

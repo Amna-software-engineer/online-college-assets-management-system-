@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setRequestList } from "../features/request.slice";
 import { requestEndPoints } from "./endpoints";
 import { toast } from "react-toastify";
@@ -31,4 +31,36 @@ export const useGetAllRequest = () => {
         }
     }
     return { loading, error, getRequests }
+}
+
+// custome hook to request asset to db
+export const useRequestAsset = () => {
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState(null)
+    const dispatch = useDispatch();
+    const requestList = useSelector(state => state.assets.requestList);
+    const {getRequests}=useGetAllRequest();
+    const requestAsset = async (formData) => {
+        try {
+            setLoading(true);
+            setError(null);
+            const response = await baseApi.post(requestEndPoints.request, formData);
+            if (response?.data) {
+              await getRequests();
+                toast.success("Request submited successfully");
+                return response.data;
+            }
+        } catch (error) {
+            console.log("error ", error);
+            const message = error?.response?.data?.message || error?.message || "Request submission failed";
+            setError(message);
+            toast.error(message);
+            return null;
+        }
+        finally {
+            setLoading(false)
+        }
+    }
+
+    return { requestAsset, loading, error }
 }
