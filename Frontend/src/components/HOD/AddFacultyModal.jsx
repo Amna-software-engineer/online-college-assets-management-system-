@@ -4,23 +4,26 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useAddFaculty } from '../../api/asset.api';
 import Loader from '../Loader';
+import { useRequestAsset } from '../../api/request.api';
 
 const AddFacultyModal = ({ isOpen, onClose }) => {
   const user = useSelector(state => state.auth.currUser);
+  // RequestorId, department, itemName, email
   const [formData, setFormData] = useState({
-    name: '',
+    RequestorId: user?._id || '',
+    itemName: '', //for name of faculty
     email: '',
-    role: 'Faculty',
     department: user?.department || '',
-  
+  requestType: "Faculty Request"
   });
 
 
-   const { addFaculty, loading } = useAddFaculty();
+   const { requestAsset, loading } = useRequestAsset();
   const navigate = useNavigate();
 
   const HandleSubmit = async (formData) => {
-    const response = await addFaculty(formData);
+    setFormData({...formData, requestType: "Faculty Request", department: user?.department, RequestorId: user?.userId})
+    const response = await requestAsset(formData);
     onClose()
     if (response?.data) {
       navigate("/hod/manage-assets")
@@ -64,8 +67,8 @@ const AddFacultyModal = ({ isOpen, onClose }) => {
               <User className="absolute left-4 top-3.5 text-slate-300" size={18} />
               <input
                 type="text" 
-                value={formData.name}
-                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                value={formData.itemName}
+                onChange={(e) => setFormData({...formData, itemName: e.target.value})}
                 placeholder="e.g. Prof. Ahmed"
                 className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border-2 border-transparent rounded-2xl focus:border-cyan-500 focus:bg-white transition-all text-sm font-bold text-slate-700 outline-none"
               />

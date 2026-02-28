@@ -161,4 +161,35 @@ export const useAddFaculty = () => {
     return { addFaculty, loading, error }
 }
 
+// custome hook to delete faculty from backend
+export const useDeleteFaculty = () => {
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState(null)
+    const dispatch = useDispatch();
+    const facultyList = useSelector(state => state.faculty.facultyList);
+
+    // function to delete faculty
+    const deleteFaculty = async (id) => {
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await baseApi.delete(assetEndPoints.deleteFaculty(id));
+            console.log("deleted response ", response);
+
+            if (response.data) {
+                let updatedList = facultyList.filter(faculty => faculty._id !== id);
+                toast.success("Faculty Deleted Successfully.");
+                dispatch(setFacultyList(updatedList));
+                return updatedList;
+            }
+        } catch (err) {
+            const message = err?.response?.data?.message || err?.message || "Faculty Deletion failed";
+            setError(message);
+            toast.error(message);
+        } finally {
+            setLoading(false)
+        }
+    }
+    return { loading, error, deleteFaculty }
+}
 

@@ -5,6 +5,7 @@ export const authEndPoints = {
 export const assetEndPoints = {
     asset: "/asset",
     faculty: "/faculty",
+    deleteFaculty: (id) => `/faculty/${id}`,
 }
 export const requestEndPoints = {
     request: "/request",

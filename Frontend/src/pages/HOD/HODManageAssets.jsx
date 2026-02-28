@@ -1,6 +1,9 @@
 import React, { useMemo, useState } from 'react';
 import { toast } from "react-toastify";
-import { Search, Filter, Download, MoreVertical, Eye, Edit3, RefreshCcw, Trash2, Users, ArrowLeftRight, UserMinus, X, Package, AlertTriangle, Database, UserCheck, Settings, Plus, Hash, LayoutGrid, ChevronDown
+import {
+  Search, ArrowLeftRight, Package, Database, UserCheck, ChevronDown, Eye,
+  EllipsisVertical
+
 } from 'lucide-react';
 import AddFacultyModal from '../../components/HOD/AddFacultyModal';
 import RemoveAccessModal from '../../components/HOD/RemoveAccessModal';
@@ -27,7 +30,7 @@ const HODManageAssets = () => {
   const { facultyList } = useSelector(state => state?.faculty);
   const [activeFacultyFilter, setActiveFacultyFilter] = useState(null);
   const [assetDistribution, setAssetDistribution] = useState({ totalUnits: 0, assignedUnits: 0, availableUnits: 0 });
-
+  const [openDropdown, setOpenDropdown] = useState(null);
 
   // category data
   const category = [
@@ -144,7 +147,7 @@ const HODManageAssets = () => {
         </div>
       </div>
       {/*4. Asset List Table */}
-      <div className="bg-white rounded-3xl border border-slate-100 shadow-md overflow-hidden">
+      <div div className="bg-white rounded-3xl border border-slate-100 shadow-md overflow-hidden" >
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-[#008BA9] text-white">
@@ -232,7 +235,7 @@ const HODManageAssets = () => {
                     <div className="flex items-center justify-center gap-4 text-slate-400 group-hover:text-slate-700 transition-all">
                       <Eye size={18} onClick={() => { handleViewDetails(asset); calculateAssetDistribtuion(asset); }} className="hover:text-cyan-600 cursor-pointer transition-colors" />
 
-                     {asset?.status === "Available" && <ArrowLeftRight onClick={() => handleTransferAsset(asset)} size={18} className="hover:text-blue-600  hover:scale-110 transition-transform cursor-pointer" />}
+                      {asset?.status === "Available" && <ArrowLeftRight onClick={() => handleTransferAsset(asset)} size={18} className="hover:text-blue-600  hover:scale-110 transition-transform cursor-pointer" />}
                       {/* <Trash2 size={18} className="hover:text-red-600 hover:scale-110 transition-transform cursor-pointer" /> */}
                     </div>
                   </td>
@@ -326,8 +329,8 @@ const HODManageAssets = () => {
         <RemoveAccessModal isOpen={showRemoveAccesseModal} onClose={() => setShowRemoveAccesseModal(false)} faculty={selectedFaculty} onConfirm={handleRemoveAccessConfirm} />
         <AddFacultyModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
         <TransferAssetModal isOpen={isTransferModelOpen} onClose={() => setIsTransferModelOpen(false)} asset={selectedAsset} facultyList={facultyList} />
-      </div>
-    </div>
+      </div >
+    </div >
   );
 }
 

@@ -12,7 +12,7 @@ export const register = async (req, res) => {
     if (!name || !email || !role || !department) {
         return res.status(400).json({ success: false, message: "All fields are required" });
 
-    } else if (role !== "Faculty" && !password) {
+    } else if (role !== "Faculty" && !password) {//check password for non-faculty registration
         return res.status(400).json({ success: false, message: "Password is required for non-faculty registration" });
     } else {
 
@@ -21,7 +21,7 @@ export const register = async (req, res) => {
             if (existingUser) {
                 return res.status(400).json({ success: false, message: "User already exists" });
             }
-            const hashedPassword = password && await bcrypt.hash(password, 10) 
+            const hashedPassword = password && await bcrypt.hash(password, 10)
             const newUser = role !== "Faculty" ? await UserModel.create({ name, email, role, department, password: hashedPassword }) : await UserModel.create({ name, email, role, department });
             res.json({ success: true, message: "User created successfully", user: newUser });
         } catch (error) {
@@ -58,22 +58,34 @@ export const login = async (req, res) => {
 
 export const getFaculty = async (req, res) => {
     const authHeader = req.headers.authorization;
-        const token = authHeader && authHeader.split(" ")[1];
-        const decoded = jwt.verify(token, JWT_ACCESS_SECRET);
-        console.log('decoded',decoded);
-    
-        try {
-            let facultyList=[];
-            
-            if (decoded.role === "HOD") {
-                 facultyList = await UserModel.find({ department: decoded.department, role: "Faculty" }).select("-password");
-            } else if (decoded.role === "Principal") {
-                 facultyList = await UserModel.find({ role: "Faculty" }).select("-password");
-                 console.log("facultyList principal", facultyList);
-            }
-    
+    const token = authHeader && authHeader.split(" ")[1];
+    const decoded = jwt.verify(token, JWT_ACCESS_SECRET);
+    console.log('decoded', decoded);
+
+    try {
+        let facultyList = [];
+
+        if (decoded.role === "HOD") {
+            facultyList = await UserModel.find({ department: decoded.department, role: "Faculty" }).select("-password");
+        } else if (decoded.role === "Principal") {
+            facultyList = await UserModel.find({ role: "Faculty" }).select("-password");
+            console.log("facultyList principal", facultyList);
+        }
+
         res.json({ success: true, message: "Faculty list fetched successfully", facultyList });
-    } catch (error) {   
+    } catch (error) {
+
+        console.log("Error in showFaculty Controller", error);
+
+        res.status(500).json({ success: false, message: "Error in showFaculty Controller", error: error.message });
+    }
+}
+export const deleteFaculty = async (req, res) => {
+    const id = req.params.id;
+    try {
+        const deletedFaculty = await UserModel.findByIdAndDelete(id);
+        res.json({ success: true, message: "Faculty deleted successfully", deletedFaculty });
+    } catch (error) {
 
         console.log("Error in showFaculty Controller", error);
 

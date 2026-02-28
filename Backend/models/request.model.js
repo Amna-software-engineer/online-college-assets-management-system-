@@ -4,9 +4,10 @@ import userModel from './user.model.js'
 const requestSchema = new mongoose.Schema({
     requestType:{ 
         type: String, 
-        enum: ["New Asset", "Maintenance"], 
+        enum: ["New Asset", "Maintenance","Faculty Request"], 
         required: true 
     },
+    email: { type: String},
     RequestorId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "userModel",
@@ -23,17 +24,16 @@ const requestSchema = new mongoose.Schema({
         enum: ["Pending", "Approved", "Rejected"],
         default: "Pending"
     },
-    itemName: { type: String, required: true },
+    itemName: { type: String, required: true }, //we will use for both asset name and faculty name
     priority: {
         type: String,
         enum: ["Low", "Medium", "High"],
-        required: true
     },
-    quantity: { type: Number, required: true },
+    quantity: { type: Number },
     category: {
         type: String,
         enum: ["IT & Electronics", "Furniture", "Stationery", "Lab Equipment", "Others"],
-        required: true
+       
     },
     specifications: { type: String },  // Technical Specs
     reason: { type: String }  // Reason for Request (optional)
