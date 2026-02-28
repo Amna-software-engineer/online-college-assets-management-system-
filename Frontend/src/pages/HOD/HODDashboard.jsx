@@ -26,7 +26,7 @@ const HODDashboard = () => {
         { label: 'Others', val: assetsList?.filter(asset => asset?.category === "Others").length, color: '#0d9488' },       // bg-teal-600
     ];
 
- const totalUnits = assetsList?.reduce((total, curr) => total + (curr?.quantity || 0), 0) || 0;
+    const totalUnits = assetsList?.reduce((total, curr) => total + (curr?.quantity || 0), 0) || 0;
     // Stats Data
     const stats = [
         { label: 'Total Assets', value: totalUnits, icon: <Package className="text-cyan-600" />, bg: 'bg-cyan-50' },
@@ -68,7 +68,7 @@ const HODDashboard = () => {
                     </div>
                 ))}
             </div>
-                {/* Category and Quick actions */}
+            {/* Category and Quick actions */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
                 {/* 2. Inventory Distribution (Visual Representation) */}
@@ -170,32 +170,32 @@ const HODDashboard = () => {
             </div>
 
             {/* 4. Activity Log Table */}
-            <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-50">
-                <div className="flex justify-between items-center mb-6">
+            <div className="bg-white rounded-[2.5rem] shadow-sm border border-slate-50">
+                <div className="flex  p-8 justify-between items-center mb-6">
                     <h3 className="text-lg font-black text-slate-800 uppercase italic">Department Activity Log</h3>
                     {/* <button className="text-[10px] font-black text-[#008BA9] uppercase tracking-widest hover:underline">View All</button> */}
                 </div>
-                <div className="overflow-x-scroll">
+                <div className="overflow-x-auto ">
                     <table className="w-full">
-                        <thead>
-                            <tr className="text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-50">
-                                <th className="pb-4 px-2">Action Type</th>
-                                <th className="pb-4 px-2">Asset Name</th>
-                                <th className="pb-4 px-2">Authorized User</th>
-                                <th className="pb-4 px-2 text-right">Timeframe</th>
+                        <thead className="bg-cyan-600 text-white px-6">
+                            <tr className="uppercase tracking-widest text-left text-[10px] font-black">
+                                <th className="py-5 px-6">Action Type</th>
+                                <th className="py-5 px-6">Asset Name</th>
+                                <th className="py-5 px-6">Authorized User</th>
+                                <th className="py-5 px-6 text-right">Timeframe</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-50">
+                        <tbody className="divide-y divide-slate-50 px-6">
                             {activityLog.map((log, i) => (
                                 <tr key={i} className="group hover:bg-slate-50/50 transition-colors">
-                                    <td className="py-4 px-2">
+                                    <td className="py-4 px-6">
                                         <span className={`text-[9px] font-black px-3 py-1.5 rounded-lg uppercase ${log.color}`}>
                                             {log.type}
                                         </span>
                                     </td>
-                                    <td className="py-4 px-2 text-sm font-black text-slate-700 uppercase italic">{log.asset}</td>
-                                    <td className="py-4 px-2 text-xs font-bold text-slate-500"> {log.user}</td>
-                                    <td className="py-4 px-2 text-xs font-bold text-slate-400 italic text-right">{log.time}</td>
+                                    <td className="py-4 px-4 text-sm font-black text-slate-700 uppercase italic">{log.asset}</td>
+                                    <td className="py-4 px-4 text-xs font-bold text-slate-500"> {log.user}</td>
+                                    <td className="py-4 px-4 text-xs font-bold text-slate-400 italic text-right">{log.time}</td>
                                 </tr>
                             ))}
                         </tbody>

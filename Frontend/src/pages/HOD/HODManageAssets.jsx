@@ -1,13 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { toast } from "react-toastify";
-import {
-  Search, Filter, Download, MoreVertical, Eye, Edit3,
-  RefreshCcw, Trash2, Users, ArrowLeftRight, UserMinus, X, Package, AlertTriangle,
-  Database,
-  UserCheck,
-  Settings,
-  Plus,
-  Hash, LayoutGrid, ChevronDown
+import { Search, Filter, Download, MoreVertical, Eye, Edit3, RefreshCcw, Trash2, Users, ArrowLeftRight, UserMinus, X, Package, AlertTriangle, Database, UserCheck, Settings, Plus, Hash, LayoutGrid, ChevronDown
 } from 'lucide-react';
 import AddFacultyModal from '../../components/HOD/AddFacultyModal';
 import RemoveAccessModal from '../../components/HOD/RemoveAccessModal';
@@ -15,12 +8,7 @@ import ViewDetailsModal from '../../components/HOD/ViewDetailsModal';
 import { useSelector } from 'react-redux';
 import { Doughnut } from 'react-chartjs-2';
 import TransferAssetModal from '../../components/HOD/TransferAssetModal';
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend,
-} from 'chart.js';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, } from 'chart.js';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -168,8 +156,8 @@ const HODManageAssets = () => {
                 <th className="py-5 px-4">Qty</th>
                 <th className="py-5 px-4">Status</th>
                 <th className="py-5 px-4">Assigend To</th>
-                <th className="py-5 px-4">Value</th>
-                <th className="py-5 px-4">Health</th>
+                <th className="py-5 px-4">Price</th>
+                <th className="py-5 px-4">Condition</th>
                 <th className="py-5 px-6 text-center">Actions</th>
               </tr>
             </thead>
@@ -219,8 +207,8 @@ const HODManageAssets = () => {
 
                   {/* 5. Assigned To (Holder) */}
                   <td className="py-5 px-4">
-                    <p className="text-[10px] font-black text-slate-700 uppercase italic">
-                      {asset?.assignedTo?.name || <span className="text-slate-300">Unassigned</span>}
+                    <p className="text-[10px] font-black text-slate-700  italic">
+                      {asset?.assignedTo?.name ? `Prof. ${asset?.assignedTo?.name}` : <span className="text-slate-300">Unassigned</span>}
                     </p>
                   </td>
 
@@ -246,7 +234,7 @@ const HODManageAssets = () => {
                     <div className="flex items-center justify-center gap-4 text-slate-400 group-hover:text-slate-700 transition-all">
                       <Eye size={18} onClick={() => { handleViewDetails(asset); calculateAssetDistribtuion(asset); }} className="hover:text-cyan-600 cursor-pointer transition-colors" />
 
-                      <ArrowLeftRight onClick={() => handleTransferAsset(asset)} size={18} className="hover:text-blue-600  hover:scale-110 transition-transform cursor-pointer" />
+                     {asset?.status === "Available" && <ArrowLeftRight onClick={() => handleTransferAsset(asset)} size={18} className="hover:text-blue-600  hover:scale-110 transition-transform cursor-pointer" />}
                       {/* <Trash2 size={18} className="hover:text-red-600 hover:scale-110 transition-transform cursor-pointer" /> */}
                     </div>
                   </td>

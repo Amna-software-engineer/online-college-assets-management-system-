@@ -6,13 +6,13 @@ const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || "some_random_secret_k
 export const createRequest = async (req, res) => {
     console.log("req.body",req.body);
     
-    const { RequestorId,department,itemName,quantity,category,priority,specifications,reason } = req.body;
+    const { RequestorId,department,itemName,quantity,category,priority,specifications,reason ,requestType,assetId} = req.body;
 
     try {
-        if (!RequestorId || !department || !itemName || !quantity || !priority || !category || !specifications ) {   
+        if (!RequestorId || !department || !itemName || !quantity || !priority || !category || !specifications || !requestType) {   
             return res.status(400).json({ success: false, message: "All fields are required!" });
         }
-        const newRequest = await requestModel.create({ RequestorId, department, itemName, quantity, priority, category, specifications, reason:  reason || "" });
+        const newRequest = await requestModel.create({ RequestorId, department, itemName, quantity, priority, category, specifications, reason:  reason || "", requestType,assetId: assetId || null });
         console.log(newRequest);
         
         if (newRequest) {

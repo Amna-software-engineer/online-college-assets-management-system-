@@ -16,6 +16,7 @@ const HODRequest = () => {
   const [showDetails, setShowDetails] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [formData, setFormData] = useState({
+    requestType: "New Asset",
     RequestorId: user?.userId,
     department: user?.department,
     status: "Pending",

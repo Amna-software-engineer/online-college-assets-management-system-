@@ -2,11 +2,17 @@ import mongoose from 'mongoose';
 import userModel from './user.model.js'
 
 const requestSchema = new mongoose.Schema({
+    requestType:{ 
+        type: String, 
+        enum: ["New Asset", "Maintenance"], 
+        required: true 
+    },
     RequestorId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "userModel",
         required: true
     },
+    assetId:{ type: mongoose.Schema.Types.ObjectId, ref: "assetModel" },
     department: {
         type: String,
         enum: ["CS", "Maths", "Physics", "Botany"],

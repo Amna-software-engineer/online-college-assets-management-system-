@@ -6,6 +6,7 @@ import HODDashboard from "./pages/HOD/HODDashboard";
 import MainLayout from "./components/MainLayout";
 import HODRequest from "./pages/HOD/HODRequest";
 import HODManageAssets from "./pages/HOD/HODManageAssets";
+import HODReport from "./pages/HOD/HODReport";
 
 
   const router = createBrowserRouter([
@@ -53,7 +54,7 @@ import HODManageAssets from "./pages/HOD/HODManageAssets";
         },
         {
           path:"/hod/reports",
-          element: <h1>Reports Page</h1>
+          element: <HODReport/>
         }
       ]
     },
