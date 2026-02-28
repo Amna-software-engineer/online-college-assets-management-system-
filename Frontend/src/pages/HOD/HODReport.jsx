@@ -35,7 +35,7 @@ const HODReports = () => {
         console.log("formData ", formData);
       const response = await requestAsset(formData);
       if(response?.success){
-        navigate('/hod/requests');
+        navigate('/hod/request');
       }
     }
     const handleSelectChange = (e) => {

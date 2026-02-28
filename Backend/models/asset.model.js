@@ -14,7 +14,7 @@ const assetSchema = new mongoose.Schema({
     name: { type: String, required: true },
     category: {
         type: String,
-        enum: ["IT & Electronics", "Furniture", "Stationery", "Lab Equipment", "Others"],
+        enum: ["IT & Electronics", "Furniture", "Stationery", "Lab Equipment", "Others", "Networking"],
         required: true
     },
     price: { type: Number, required: true }, // Price per unit

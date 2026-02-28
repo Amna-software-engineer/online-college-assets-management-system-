@@ -32,7 +32,7 @@ const requestSchema = new mongoose.Schema({
     quantity: { type: Number },
     category: {
         type: String,
-        enum: ["IT & Electronics", "Furniture", "Stationery", "Lab Equipment", "Others"],
+        enum: ["IT & Electronics", "Furniture", "Stationery", "Lab Equipment", "Others", "Networking"],
        
     },
     specifications: { type: String },  // Technical Specs

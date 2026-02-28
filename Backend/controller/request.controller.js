@@ -19,6 +19,9 @@ export const createRequest = async (req, res) => {
         }
         let newRequest;
         if (requestType === "Faculty Request") { // for faculty
+            if (!RequestorId || !department || !itemName || !email || !requestType  ) {
+                return res.status(400).json({ success: false, message: "All fields are required!" });
+            }
             newRequest = await requestModel.create({ requestType, RequestorId, department, itemName, email });
         }
         newRequest = await requestModel.create({ RequestorId, department, itemName, quantity, priority, category, specifications, reason: reason || "", requestType, assetId: assetId || null });

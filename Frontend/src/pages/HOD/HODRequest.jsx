@@ -31,8 +31,10 @@ const HODRequest = () => {
   const handleSubmit = async (data) => {
     data.RequestorId = user?.userId;
     data.department = user?.department;
+    console.log("data handleSubmit", data);
+    
     const response = await requestAsset(data);
-    if (response?.success) navigate("/hod/request");
+    if (response?.success) setActiveTab("history");
   };
 
   const getStatusStyle = (status) => {
