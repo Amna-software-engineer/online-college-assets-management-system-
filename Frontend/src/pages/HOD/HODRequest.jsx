@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { PlusCircle, Send, Info, Eye, AlertCircle } from 'lucide-react';
+import React, { act, useState } from 'react';
+import { PlusCircle, Send, Info, Eye, AlertCircle, Pen } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import Loader from '../../components/Loader';
 import { useRequestAsset } from '../../api/request.api';
@@ -12,7 +12,7 @@ const HODRequest = () => {
   const navigate = useNavigate();
   const { requestAsset, loading } = useRequestAsset();
   const categories = ['IT & Electronics', 'Furniture', 'Networking', 'Lab Equipment', 'Others'];
-
+  const [activeTab, setActiveTab] = useState("history");
   const [showDetails, setShowDetails] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [formData, setFormData] = useState({
@@ -53,7 +53,33 @@ const HODRequest = () => {
 
   return (
     <div className="max-w-5xl mx-auto space-y-8 mb-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      {/* Top Menu Tabs */}
+      <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-2 flex gap-2 w-fit">
+        <button
+          onClick={() => setActiveTab("history")}
+          className={`px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all
+       ${activeTab === "history" ? "bg-cyan-600 text-white shadow-md" : "text-slate-500 hover:bg-slate-100"}`} >
+          View History
+        </button>
+
+        <button
+          onClick={() => setActiveTab("request")}
+          className={`px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all
+       ${activeTab === "request" ? "bg-cyan-600 text-white shadow-md" : "text-slate-500 hover:bg-slate-100"}`} >
+          Request Asset
+        </button>
+
+        <button
+          onClick={() => setActiveTab("reports")}
+          className={`px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all
+       ${activeTab === "reports" ? "bg-cyan-600 text-white shadow-md" : "text-slate-500 hover:bg-slate-100"}`} >
+          Reports
+        </button>
+
+      </div>
       {/* Request History */}
+
+
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h3 className="text-xl font-black italic uppercase text-slate-800">My Request History</h3>
@@ -71,16 +97,21 @@ const HODRequest = () => {
                 <th className="p-6">Priority</th>
                 <th className="p-6">Status</th>
                 <th className="p-6 text-right">Date</th>
-                <th className="p-6 text-right">Actions</th>
-              </tr>
+                 <th className="p-6 text-right">Actions</th>
+                           
+                  </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
-              {requestList?.length > 0 ? (
-                requestList?.map((req, index) => (
+              {requestList?.length > 0 ?
+                (requestList?.filter((req) =>
+                  activeTab === "history" ? req?.requestType === "New Asset"
+                    : activeTab === "reports" ? req?.requestType === "Maintenance"
+                      : false
+                ).map((req, index) => (
                   <tr key={index} className={`transition-colors group ${index % 2 === 0 ? "bg-white" : "bg-slate-50/50"} hover:bg-cyan-50/30`}>
                     <td className="p-6">
                       <p className="text-sm font-black text-slate-900 italic uppercase">{req.itemName}</p>
-                      <p className="text-[10px] font-bold text-slate-500 truncate max-w-[200px] mt-1">
+                      <p className="text-[10px] font-bold text-slate-500 truncate max-w-50 mt-1">
                         {req.specifications || "No specs provided"}
                       </p>
                     </td>
@@ -103,30 +134,31 @@ const HODRequest = () => {
                     <td className="p-6 text-right">
                       <p className="text-[10px] font-bold text-slate-500"> {new Date(req.createdAt).toLocaleDateString('en-GB')} </p>
                     </td>
-                    <td className="p-6">
+                    {req?.status === "Pending" && <td className="p-6">
                       <div className="flex items-center justify-center gap-4 text-slate-400 group-hover:text-slate-700 transition-all">
-                        <Eye size={18} onClick={() => { setSelectedRequest(req); setShowDetails(true); }} className="hover:text-cyan-600 cursor-pointer transition-colors" />
+                        <Pen size={18} onClick={() => { setSelectedRequest(req); setShowDetails(true); }} className="hover:text-cyan-600 cursor-pointer transition-colors" />
+                      </div>
+                    </td>}
+                  </tr>)
+                )
+                ) : (
+                  <tr>
+                    <td colSpan="6" className="p-20 text-center">
+                      <div className="flex flex-col items-center gap-2 opacity-30">
+                        <AlertCircle size={40} />
+                        <p className="text-[10px] font-black uppercase italic">No requests found</p>
                       </div>
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="6" className="p-20 text-center">
-                    <div className="flex flex-col items-center gap-2 opacity-30">
-                      <AlertCircle size={40} />
-                      <p className="text-[10px] font-black uppercase italic">No requests found</p>
-                    </div>
-                  </td>
-                </tr>
-              )}
+                )}
             </tbody>
           </table>
         </div>
       </div>
 
+
       {/* Request Form */}
-      <div className='space-y-6'>
+      {activeTab === "request" && <div className='space-y-6'>
         <h3 className="text-lg font-black text-slate-800 italic">Asset Requisition Form</h3>
         <div className="bg-white rounded-[2.5rem] shadow-md border border-slate-100 overflow-hidden">
           <div className="p-8 md:p-12">
@@ -201,7 +233,7 @@ const HODRequest = () => {
               <div className="flex flex-col gap-2 md:col-span-2">
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Purpose / Reason</label>
                 <input
-                  type="text" 
+                  type="text"
                   placeholder="Why is this asset needed?"
                   className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-4 text-sm font-bold text-slate-700 focus:border-[#008BA9] focus:outline-none transition-all"
                   value={formData.reason}
@@ -232,7 +264,7 @@ const HODRequest = () => {
             </form>
           </div>
         </div>
-      </div>
+      </div>}
 
       {/* Modal Rendering */}
       <ViewDetailsModal

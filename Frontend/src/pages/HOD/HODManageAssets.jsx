@@ -67,13 +67,11 @@ const HODManageAssets = () => {
   const calculateAssetDistribtuion = (asset) => {
     const totalUnits = assetsList?.filter(a => a.name === asset.name && a.category === asset.category).reduce((total, curr) => total + (curr?.quantity || 0), 0) || 0;
     const assignedUnits = assetsList?.filter(a => a.name === asset.name && a.category === asset.category && a.assignedTo).reduce((total, curr) => total + (curr?.quantity || 0), 0) || 0;
-    console.log("total units ", totalUnits, assignedUnits);
     const availableUnits = totalUnits - assignedUnits;
     setAssetDistribution({ totalUnits, assignedUnits, availableUnits });
   };
   ;
   const handleTransferAsset = (asset) => {
-    console.log("asset tran ass", asset);
     setSelectedAsset(asset);
     setIsTransferModelOpen(true);
   }
