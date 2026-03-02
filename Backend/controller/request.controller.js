@@ -83,3 +83,22 @@ export const getRequests = async (req, res) => {
         res.status(500).json({ success: false, message: "Error fetching requests", error: error.message });
     }
 };
+
+export const deleteFaculty = async (req, res) => {
+    
+    const id = req.params.id;
+    console.log("delete request ",id);
+    try {
+        const deletedRequest = await requestModel.findByIdAndDelete(id);
+        
+        console.log(deletedRequest);
+        if (deletedRequest) {
+            return  res.json({ success: true, message: "Request deleted successfully", deletedRequest });
+        }
+    } catch (error) {
+
+        console.log("Error in delete request Controller", error);
+
+        res.status(500).json({ success: false, message: "Error in delete request Controller", error: error.message });
+    }
+}

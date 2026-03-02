@@ -81,10 +81,12 @@ export const getFaculty = async (req, res) => {
     }
 }
 export const deleteFaculty = async (req, res) => {
+    
     const id = req.params.id;
+    console.log("delete faculty ",id);
     try {
         const deletedFaculty = await UserModel.findByIdAndDelete(id);
-        res.json({ success: true, message: "Faculty deleted successfully", deletedFaculty });
+       return  res.json({ success: true, message: "Faculty deleted successfully", deletedFaculty });
     } catch (error) {
 
         console.log("Error in showFaculty Controller", error);

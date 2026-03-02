@@ -64,7 +64,7 @@ export const useRequestAsset = () => {
 
     return { requestAsset, loading, error }
 }
-// custome hook to request asset to db
+// custome hook to update asset to db
 export const useUpdateRequest = () => {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
@@ -94,4 +94,35 @@ export const useUpdateRequest = () => {
     }
 
     return { updateRequest, loading, error }
+}
+// custome hook to delete request from backend
+export const useDeleteRequest = () => {
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState(null)
+    const dispatch = useDispatch();
+    const requestList = useSelector(state => state.assets.requestList);
+    const { getRequests } = useGetAllRequest(); // to refresh request list after deletion
+
+    // function to delete request
+    const deleteRequest = async (id) => {
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await baseApi.delete(requestEndPoints.deleteRequest(id));
+            console.log("deleted response ", response);
+
+            if (response.data) {
+                toast.success("Request Deleted Successfully.")
+                await getRequests(); // refresh request list
+                return response.data;
+            }
+        } catch (err) {
+            const message = err?.response?.data?.message || err?.message || "Request Deletion failed";
+            setError(message);
+            toast.error(message);
+        } finally {
+            setLoading(false)
+        }
+    }
+    return { loading, error, deleteRequest }
 }

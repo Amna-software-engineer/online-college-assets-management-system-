@@ -1,10 +1,11 @@
 import React, { act, useState } from 'react';
-import { PlusCircle, Send, Info, Eye, AlertCircle, Pen } from 'lucide-react';
+import { PlusCircle, Send, Info, Eye, AlertCircle, Pen, Trash2 } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import Loader from '../../components/Loader';
-import { useRequestAsset, useUpdateRequest } from '../../api/request.api';
+import { useDeleteRequest, useRequestAsset, useUpdateRequest } from '../../api/request.api';
 import { useNavigate } from 'react-router-dom';
 import ViewDetailsModal from '../../components/HOD/ViewDetailsModal';
+import { useDeleteFaculty } from '../../api/asset.api';
 
 const HODRequest = () => {
   const user = useSelector(state => state?.auth?.currUser);
@@ -12,6 +13,7 @@ const HODRequest = () => {
   const navigate = useNavigate();
   const { requestAsset, loading } = useRequestAsset();
   const { updateRequest, loading: updateLoading } = useUpdateRequest();
+  const { deleteRequest, loading: deleteLoading } = useDeleteRequest();
   const categories = ['IT & Electronics', 'Furniture', 'Networking', 'Lab Equipment', 'Others'];
   const [activeTab, setActiveTab] = useState("history");
   const [showDetails, setShowDetails] = useState(false);
@@ -39,11 +41,14 @@ const HODRequest = () => {
     if (response?.success) setActiveTab("history");
   };
   const handleUpdate = async (data,id) => {
-    // itemName, quantity, priority, category, specifications, reason
-    
     console.log("data handleUpdate", data);
     const response = await updateRequest(data,id);
     if (response?.success) setActiveTab("history");
+  };
+  const handleDelete = async (id) => {
+    console.log("data handleDelete", id);
+    const response = await deleteRequest(id);
+    if (response?.success) setActiveTab("faculty");
   };
 
   const getStatusStyle = (status) => {
@@ -201,7 +206,7 @@ const HODRequest = () => {
                   <th className="p-6">Department</th>
                   <th className="p-6">Status</th>
                   <th className="p-6 text-right">Date</th>
-                  {/* {requestList.some(req => req.requestType === "Faculty" && req.status === "Pending") && <th className="p-6 text-right">Actions</th>} */}
+                  <th className="p-6 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
@@ -219,13 +224,13 @@ const HODRequest = () => {
                           </span>
                         </td>
                         <td className="p-6 text-right">{new Date(req.createdAt).toLocaleDateString("en-GB")}</td>
-                        {/* {req.status === "Pending" && (
+                        {req.status === "Pending" && (
                         <td className="p-6">
                           <div className="flex items-center justify-center gap-4 text-slate-400 group-hover:text-slate-700 transition-all">
-                            <Pen size={18} onClick={() => { setSelectedRequest(req); setShowDetails(true); }} className="hover:text-cyan-600 cursor-pointer transition-colors" />
+                            <Trash2 size={18} onClick={() => { handleDelete(req._id); }} className="hover:text-red-600 cursor-pointer transition-colors" />
                           </div>
                         </td>
-                      )} */}
+                      )}
                       </tr>
                     ))
                 ) : (

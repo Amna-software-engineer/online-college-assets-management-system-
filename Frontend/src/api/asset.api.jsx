@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux";
-import { useState } from "react";
+import { use, useState } from "react";
 import { toast } from "react-toastify";
 import { baseApi } from "./base.api";
 import { assetEndPoints } from "./endpoints";
@@ -167,6 +167,7 @@ export const useDeleteFaculty = () => {
     const [error, setError] = useState(null)
     const dispatch = useDispatch();
     const facultyList = useSelector(state => state.faculty.facultyList);
+    const { getFaculty } = useGetAllFaculty(); // to refresh faculty list after deletion
 
     // function to delete faculty
     const deleteFaculty = async (id) => {
@@ -177,10 +178,9 @@ export const useDeleteFaculty = () => {
             console.log("deleted response ", response);
 
             if (response.data) {
-                let updatedList = facultyList.filter(faculty => faculty._id !== id);
-                toast.success("Faculty Deleted Successfully.");
-                dispatch(setFacultyList(updatedList));
-                return updatedList;
+                toast.success("Faculty Deleted Successfully.")
+                await getFaculty(); // refresh faculty list
+                return response.data;
             }
         } catch (err) {
             const message = err?.response?.data?.message || err?.message || "Faculty Deletion failed";
