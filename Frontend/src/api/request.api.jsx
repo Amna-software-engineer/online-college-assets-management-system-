@@ -64,3 +64,34 @@ export const useRequestAsset = () => {
 
     return { requestAsset, loading, error }
 }
+// custome hook to request asset to db
+export const useUpdateRequest = () => {
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState(null)
+    const dispatch = useDispatch();
+    const requestList = useSelector(state => state.assets.requestList);
+    const {getRequests}=useGetAllRequest();
+    const updateRequest = async (formData,id) => {
+        try {
+            setLoading(true);
+            setError(null);
+            const response = await baseApi.patch(requestEndPoints.updateRequest(id), formData);
+            if (response?.data) {
+              await getRequests();
+                toast.success("Request updated successfully");
+                return response.data;
+            }
+        } catch (error) {
+            console.log("error ", error);
+            const message = error?.response?.data?.message || error?.message || "Request update failed";
+            setError(message);
+            toast.error(message);
+            return null;
+        }
+        finally {
+            setLoading(false)
+        }
+    }
+
+    return { updateRequest, loading, error }
+}

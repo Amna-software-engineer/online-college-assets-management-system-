@@ -41,6 +41,23 @@ export const createRequest = async (req, res) => {
         res.status(500).json({ success: false, message: "Error creating request", error: error.message });
     }
 };
+export const updateRequest = async (req, res) => {
+    const requestId = req.params.id;
+    
+    try {
+        const {  itemName, quantity, priority, category, specifications, reason } = req.body;
+        
+          const  updatedRequest = await requestModel.findByIdAndUpdate(requestId, {  itemName, quantity, priority, category, specifications, reason  }, { new: true });
+        
+        if (updatedRequest) {
+            return res.status(201).json({ success: true, message: "Request updated successfully!", request: updatedRequest });
+        }
+    } catch (error) {
+        console.log("Error updating request:", error);
+
+        res.status(500).json({ success: false, message: "Error updating request", error: error.message });
+    }
+};
 
 export const getRequests = async (req, res) => {
     const authHeader = req.headers.authorization;
