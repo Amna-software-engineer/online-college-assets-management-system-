@@ -5,8 +5,12 @@ const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || "some_random_secret_k
 
 export const createRequest = async (req, res) => {
     console.log("req.body", req.body);
-
-    const { RequestorId, department, itemName, quantity, category, priority, specifications, reason, requestType, assetId, email } = req.body;
+    const authHeader = req.headers.authorization;
+        const token = authHeader && authHeader.split(" ")[1];
+        const decoded = jwt.verify(token, JWT_ACCESS_SECRET);
+    const {  department, itemName, quantity, category, priority, specifications, reason, requestType, assetId, email } = req.body;
+    
+    const RequestorId = decoded.userId;
 
     try {
         if (!requestType) {
@@ -23,9 +27,10 @@ export const createRequest = async (req, res) => {
                 return res.status(400).json({ success: false, message: "All fields are required!" });
             }
             newRequest = await requestModel.create({ requestType, RequestorId, department, itemName, email });
+        }else{
+            console.log(newRequest);
+            newRequest = await requestModel.create({ RequestorId, department, itemName, quantity, priority, category, specifications, reason: reason || "", requestType, assetId: assetId || null });
         }
-        newRequest = await requestModel.create({ RequestorId, department, itemName, quantity, priority, category, specifications, reason: reason || "", requestType, assetId: assetId || null });
-        console.log(newRequest);
 
         if (newRequest) {
             return res.status(201).json({ success: true, message: "Request created successfully!", request: newRequest });

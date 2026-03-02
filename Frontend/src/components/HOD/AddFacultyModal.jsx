@@ -22,7 +22,6 @@ const AddFacultyModal = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
 
   const HandleSubmit = async (formData) => {
-    setFormData({...formData, requestType: "Faculty Request", department: user?.department, RequestorId: user?.userId})
     const response = await requestAsset(formData);
     onClose()
     if (response?.data) {
