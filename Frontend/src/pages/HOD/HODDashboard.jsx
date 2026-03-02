@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { Chart as ChartJS, defaults } from "chart.js/auto";
 import { Doughnut } from "react-chartjs-2";
 import { formatDistanceToNow } from "date-fns";
+import StatsCards from '../../components/StatsCards';
 
 
 const HODDashboard = () => {
@@ -30,7 +31,12 @@ const HODDashboard = () => {
     // Stats Data
     const stats = [
         { label: 'Total Assets', value: totalUnits, icon: <Package className="text-cyan-600" />, bg: 'bg-cyan-50' },
-        { label: 'Asset Value', value: totalAssetsValue, icon: <DollarSign className="text-blue-600" />, bg: 'bg-blue-50' },
+        { label: 'Asset Value', value: Intl.NumberFormat(undefined,{
+                            notation: "compact",
+                            compactDisplay: "short",
+                            currency:  "PKR",
+                            style: "currency"
+                        }).format(totalAssetsValue), icon: <DollarSign className="text-blue-600" />, bg: 'bg-blue-50' },
         { label: 'Maintenance', value: Math.round(MaintenanceHealth) + '%', icon: <Settings className="text-orange-600" />, bg: 'bg-orange-50' },
         { label: 'Requests', value: requestList?.length || 0, icon: <ClipboardList className="text-red-600" />, bg: 'bg-red-50' },
         { label: 'Faculty', value: facultyList?.length || 0, icon: <Users className="text-indigo-600" />, bg: 'bg-indigo-50' },
@@ -57,17 +63,7 @@ const HODDashboard = () => {
         <div className="space-y-10 animate-in fade-in duration-500">
 
             {/* 1. Top Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-                {stats.map((stat, index) => (
-                    <div key={index} className="bg-white p-6 rounded-3xl shadow-sm border border-slate-50 flex flex-col items-center text-center group hover:shadow-md transition-all">
-                        <div className={`${stat.bg} p-3 rounded-2xl mb-4 group-hover:scale-110 transition-transform`}>
-                            {stat.icon}
-                        </div>
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{stat.label}</p>
-                        <h3 className="text-xl font-black text-slate-800 italic uppercase">{stat.value}</h3>
-                    </div>
-                ))}
-            </div>
+            <StatsCards stats={stats} />
             {/* Category and Quick actions */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
@@ -76,7 +72,6 @@ const HODDashboard = () => {
                     {category && category.length > 0 ? (
                         <Doughnut
                             data={
-
                                 {
                                     // all labels should be in single chart
                                     labels: category.map(cat => cat.label),
@@ -87,11 +82,8 @@ const HODDashboard = () => {
                                             backgroundColor: category.map(cat => cat.color), //bgcolor for each category
                                             borderColor: category.map(cat => cat.color),
                                             cutout: '60%'
-
                                         }
                                     ],
-
-
                                 }}
                             options={{
                                 responsive: true,

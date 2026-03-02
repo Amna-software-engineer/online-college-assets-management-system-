@@ -10,7 +10,6 @@ export const UseLogin = () => {
     const [error, setError] = useState(null)
     const dispatch = useDispatch();
     const login = async (email, password) => {
-        console.log("email, password ", email, password);
         try {
             setLoading(true);
             setError(null);

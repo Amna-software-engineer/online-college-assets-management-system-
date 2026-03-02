@@ -25,6 +25,7 @@ const LoginForm = () => {
 
             if (response?.user?.role === "Principal") {
                 navigate("/principal/dashboard");
+                  await Promise.all([ getAssets(),  getRequests(),  getFaculty()])
             } else if (response?.user?.role === "HOD") {
                 navigate("/hod/dashboard");
                await Promise.all([ getAssets(),  getRequests(),  getFaculty()])
