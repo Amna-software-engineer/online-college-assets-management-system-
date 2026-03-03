@@ -24,7 +24,7 @@ const Header = ({onMenuClick}) => {
           <div className="h-8 w-0.75 bg-white/50 rounded-full hidden sm:block"></div>
           {/* 3. Title */}
           <h1 className="text-lg md:text-xl font-black italic tracking-widest uppercase truncate max-w--none">
-            {role === 'Principal' ? 'Administration' : user.department + ' Department'}
+            {role === 'Principal' ? 'Administration' : user.department.name + ' Department'}
           </h1>
         </div>
 

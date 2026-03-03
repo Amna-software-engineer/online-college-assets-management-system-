@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import authRouter from "./router/auth.router.js";
 import assetRouter from "./router/asset.router.js";
 import requestRouter from "./router/request.router.js";
+import deptRouter from "./router/department.router.js";
 import { verifyToken } from "./middleware/auth.middleware.js"
 
 dotenv.config();
@@ -25,6 +26,7 @@ app.get("/", (req, res) => {
 app.use("/api", authRouter);
 app.use("/api", verifyToken, assetRouter);
 app.use("/api", verifyToken, requestRouter);
+app.use("/api", verifyToken, deptRouter);
 
 mongoose.connect(mongoDbURL,)
     .then(() => {

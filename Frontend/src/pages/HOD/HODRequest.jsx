@@ -24,7 +24,7 @@ const HODRequest = () => {
   const [formData, setFormData] = useState({
     requestType: "New Asset",
     RequestorId: user?.userId,
-    department: user?.department,
+    department: user?.department?._id,
     status: "Pending",
     category: "",
     itemName: "",
@@ -36,7 +36,7 @@ const HODRequest = () => {
 
   const handleSubmit = async (data) => {
     data.RequestorId = user?.userId;
-    data.department = user?.department;
+    data.department = user?.department._id;
     console.log("data handleSubmit", data);
 
     const response = await requestAsset(data);

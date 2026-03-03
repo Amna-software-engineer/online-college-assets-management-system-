@@ -1,22 +1,23 @@
 import mongoose from 'mongoose';
 import userModel from './user.model.js'
+import departmentModel from "./department.model.js"
 
 const requestSchema = new mongoose.Schema({
-    requestType:{ 
-        type: String, 
-        enum: ["New Asset", "Maintenance","Faculty Request"], 
-        required: true 
+    requestType: {
+        type: String,
+        enum: ["New Asset", "Maintenance", "Faculty Request"],
+        required: true
     },
-    email: { type: String},
+    email: { type: String },
     RequestorId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "userModel",
         required: true
     },
-    assetId:{ type: mongoose.Schema.Types.ObjectId, ref: "assetModel" },
+    assetId: { type: mongoose.Schema.Types.ObjectId, ref: "assetModel" },
     department: {
-        type: String,
-        enum: ["CS", "Maths", "Physics", "Botany"],
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "departmentModel",
         required: true
     },
     status: {
@@ -33,7 +34,7 @@ const requestSchema = new mongoose.Schema({
     category: {
         type: String,
         enum: ["IT & Electronics", "Furniture", "Stationery", "Lab Equipment", "Others", "Networking"],
-       
+
     },
     specifications: { type: String },  // Technical Specs
     reason: { type: String }  // Reason for Request (optional)

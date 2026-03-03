@@ -7,14 +7,15 @@ const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || "some_random_secret_k
 
 
 export const createAsset = async (req, res) => {
-    const { name, category, price, quantity, assignedTo, department, condition } = req.body;
+    let { name, category, price, quantity, assignedTo, department, condition } = req.body;
     console.log(req.body);
     
     try {
         if (!name || !category || !price || !quantity || !department || !condition) {
             return res.status(400).json({ success: false, message: "All fields are required!" });
         }
-
+      
+        
         // 1. Check if same asset exists in Main Store (assignedTo: null)
         let existingAsset = await assetModel.findOne({
             name,
@@ -146,7 +147,7 @@ export const getAssets = async (req, res) => {
         // enum: ["CS", "Maths", "Physics"]
 
         if (decoded.role === "HOD") {
-            assetList = await assetModel.find({ department: decoded.department }).populate("assignedTo", "name email");
+            assetList = await assetModel.find({ department: decoded.department._id }).populate("assignedTo", "name email");
             assetList = assetList.filter(asset => asset.quantity > 0); // HOD ko apne assigned assets nahi dikhane
             console.log("assetList hod", assetList);
         } else if (decoded.role === "Principal") {

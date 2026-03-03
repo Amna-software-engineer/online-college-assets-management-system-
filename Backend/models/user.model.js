@@ -5,7 +5,11 @@ const userSchema = new mongoose.Schema({
     email: { type: String, required: true },
     password: { type: String },
     role: { type: String, enum: ["Principal", "HOD", "Faculty"], required: true },
-    department: { type: String, enum: ["CS", "Maths", "Physics","Botany"],required: true }
+    department: {
+           type: mongoose.Schema.Types.ObjectId,
+           ref: "departmentModel",
+           required: true
+       },
 },{timestamps:true})
 
 const model = mongoose.model("userModel", userSchema);

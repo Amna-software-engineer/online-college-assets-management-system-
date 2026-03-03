@@ -38,11 +38,13 @@ export const login = async (req, res) => {
     }
     try {
 
-        const User = await UserModel.findOne({ email });
+        const User = await UserModel.findOne({ email }).populate("department","name");
+        console.log("user ",User);
+        
         if (!User) {
             return res.status(404).json({ success: false, message: "User not found" });
         }
-        const isMatch = await bcrypt.compare(password, User.password);
+        const isMatch =  bcrypt.compare(password, User.password);
         if (!isMatch) {
             return res.status(401).json({ success: false, message: "Invalid password" });
         }
@@ -66,7 +68,7 @@ export const getFaculty = async (req, res) => {
         let facultyList = [];
 
         if (decoded.role === "HOD") {
-            facultyList = await UserModel.find({ department: decoded.department, role: "Faculty" }).select("-password");
+            facultyList = await UserModel.find({ department: decoded.department._id, role: "Faculty" }).select("-password");
         } else if (decoded.role === "Principal") {
             facultyList = await UserModel.find({ role: "Faculty" }).select("-password");
             console.log("facultyList principal", facultyList);
@@ -80,6 +82,7 @@ export const getFaculty = async (req, res) => {
         res.status(500).json({ success: false, message: "Error in showFaculty Controller", error: error.message });
     }
 }
+// to delet faculty member
 export const deleteFaculty = async (req, res) => {
     
     const id = req.params.id;

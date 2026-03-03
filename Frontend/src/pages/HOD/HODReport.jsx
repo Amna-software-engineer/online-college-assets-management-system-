@@ -13,7 +13,7 @@ const HODReports = () => {
     const [formData, setFormData] = useState({
         requestType: "Maintenance",
         RequestorId: user?.userId,
-        department: user?.department,
+        department: user?.department._id,
         status: "Pending",
         assetId: "",
         category: "",
@@ -32,7 +32,7 @@ const HODReports = () => {
     const assets = view === 'assigned' ? assignedAssets : view === 'damaged' ? damagedAssets : view === 'lost' ? lostAssets : assetsList;
     // handlers
     const handleSubmit = async (formData) => {
-        setFormData({ ...formData, RequestorId: user?.userId, department: user?.department, specifications: "Damage Report", priority: "Medium", requestType: "Maintenance" });
+        setFormData({ ...formData, RequestorId: user?.userId, department: user?.department._id, specifications: "Damage Report", priority: "Medium", requestType: "Maintenance" });
         console.log("formData ", formData);
         const response = await requestAsset(formData);
         if (response?.success) {

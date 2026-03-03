@@ -20,7 +20,11 @@ const assetSchema = new mongoose.Schema({
     price: { type: Number, required: true }, // Price per unit
     quantity: { type: Number },
     assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: "userModel" },
-    department: { type: String, enum: ["CS", "Maths", "Physics","Botany"],required: true },
+    department: {
+           type: mongoose.Schema.Types.ObjectId,
+           ref: "departmentModel",
+           required: true
+       },
     condition: {
         type: String,
         enum: ["New", "Damaged", "Lost", "Maintenance"],
