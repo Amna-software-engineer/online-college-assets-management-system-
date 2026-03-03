@@ -6,6 +6,7 @@ import { Chart as ChartJS, defaults } from "chart.js/auto";
 import { Doughnut } from "react-chartjs-2";
 import { formatDistanceToNow } from "date-fns";
 import StatsCards from '../../components/StatsCards';
+import DataTable from '../../components/DataTable';
 
 
 const HODDashboard = () => {
@@ -31,12 +32,14 @@ const HODDashboard = () => {
     // Stats Data
     const stats = [
         { label: 'Total Assets', value: totalUnits, icon: <Package className="text-cyan-600" />, bg: 'bg-cyan-50' },
-        { label: 'Asset Value', value: Intl.NumberFormat(undefined,{
-                            notation: "compact",
-                            compactDisplay: "short",
-                            currency:  "PKR",
-                            style: "currency"
-                        }).format(totalAssetsValue), icon: <DollarSign className="text-blue-600" />, bg: 'bg-blue-50' },
+        {
+            label: 'Asset Value', value: Intl.NumberFormat(undefined, {
+                notation: "compact",
+                compactDisplay: "short",
+                currency: "PKR",
+                style: "currency"
+            }).format(totalAssetsValue), icon: <DollarSign className="text-blue-600" />, bg: 'bg-blue-50'
+        },
         { label: 'Maintenance', value: Math.round(MaintenanceHealth) + '%', icon: <Settings className="text-orange-600" />, bg: 'bg-orange-50' },
         { label: 'Requests', value: requestList?.length || 0, icon: <ClipboardList className="text-red-600" />, bg: 'bg-red-50' },
         { label: 'Faculty', value: facultyList?.length || 0, icon: <Users className="text-indigo-600" />, bg: 'bg-indigo-50' },
@@ -167,32 +170,24 @@ const HODDashboard = () => {
                     <h3 className="text-lg font-black text-slate-800 uppercase italic">Department Activity Log</h3>
                     {/* <button className="text-[10px] font-black text-[#008BA9] uppercase tracking-widest hover:underline">View All</button> */}
                 </div>
-                <div className="overflow-x-auto ">
-                    <table className="w-full">
-                        <thead className="bg-cyan-600 text-white px-6">
-                            <tr className="uppercase tracking-widest text-left text-[10px] font-black">
-                                <th className="py-5 px-6">Action Type</th>
-                                <th className="py-5 px-6">Asset Name</th>
-                                <th className="py-5 px-6">Authorized User</th>
-                                <th className="py-5 px-6 text-right">Timeframe</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-50 px-6">
-                            {activityLog.map((log, i) => (
-                                <tr key={i} className="group hover:bg-slate-50/50 transition-colors">
-                                    <td className="py-4 px-6">
-                                        <span className={`text-[9px] font-black px-3 py-1.5 rounded-lg uppercase ${log.color}`}>
-                                            {log.type}
-                                        </span>
-                                    </td>
-                                    <td className="py-4 px-4 text-sm font-black text-slate-700 uppercase italic">{log.asset}</td>
-                                    <td className="py-4 px-4 text-xs font-bold text-slate-500"> {log.user}</td>
-                                    <td className="py-4 px-4 text-xs font-bold text-slate-400 italic text-right">{log.time}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                <DataTable
+                    data={activityLog}
+                    tableHeader={["Action Type", "Asset Name", "Authorized User", "Timeframe"]}
+                    renderRow={(log, i) => (
+                        <tr key={i} className="group hover:bg-slate-50/50 transition-colors">
+                            <td className="py-4 px-6">
+                                <span className={`text-[9px] font-black px-3 py-1.5 rounded-lg uppercase ${log.color}`}>
+                                    {log.type}
+                                </span>
+                            </td>
+                            <td className="py-4 px-4 text-sm font-black text-slate-700 uppercase italic">{log.asset}</td>
+                            <td className="py-4 px-4 text-xs font-bold text-slate-500"> {log.user}</td>
+                            <td className="py-4 px-4 text-xs font-bold text-slate-400 italic text-right">{log.time}</td>
+                        </tr>
+                    )}
+
+                />
+
             </div>
         </div>
     );
