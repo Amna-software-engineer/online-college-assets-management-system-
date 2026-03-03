@@ -4,7 +4,8 @@ import { TriangleAlert, Download, Users, Trash2, ClipboardList, ArrowLeft, Searc
 import { useRequestAsset } from '../../api/request.api';
 import { CSVLink } from "react-csv";
 
-import {useNavigate} from "react-router-dom"
+import { useNavigate } from "react-router-dom"
+import DataTable from '../../components/DataTable';
 const HODReports = () => {
     const { assetsList } = useSelector(state => state?.assets);
     const user = useSelector(state => state?.auth?.currUser);
@@ -33,16 +34,16 @@ const HODReports = () => {
     const handleSubmit = async (formData) => {
         setFormData({ ...formData, RequestorId: user?.userId, department: user?.department, specifications: "Damage Report", priority: "Medium", requestType: "Maintenance" });
         console.log("formData ", formData);
-      const response = await requestAsset(formData);
-      if(response?.success){
-        navigate('/hod/request');
-      }
+        const response = await requestAsset(formData);
+        if (response?.success) {
+            navigate('/hod/request');
+        }
     }
     const handleSelectChange = (e) => {
         const asset = assetsList?.find(a => a._id === e.target.value);
         setFormData({ ...formData, assetId: asset?._id, category: asset?.category, itemName: asset?.name })
     }
-    const csvData =assets?.map(a=>({
+    const csvData = assets?.map(a => ({
         "Asset Id": a?._id,
         "Category": a?.category,
         "Quantity": a?.quantity,
@@ -50,18 +51,16 @@ const HODReports = () => {
         "Assigned To": a?.assignedTo?.name,
         "Price": a?.price,
         "Condition": a?.condition
-    })) 
-    console.log("csvData ",csvData);
-    
-    // Asset Identification	Category	Qty	Status	Assigend To	Value	Condition
+    }))
+    console.log("csvData ", csvData);
+
     // table
-    if (view === 'assigned'||view === 'damaged'||view === 'lost'||view === 'summary') {
+    if (view === 'assigned' || view === 'damaged' || view === 'lost' || view === 'summary') {
         return (
             <div className="p-4 md:p-8 space-y-6 animate-in fade-in duration-500">
                 <button onClick={() => setView('main')} className="flex items-center gap-2 text-[#008BA9] font-black text-[10px] uppercase tracking-widest hover:gap-3 transition-all">
                     <ArrowLeft size={14} /> RETURN TO DEPARTMENTAL CONSOLE
                 </button>
-
                 <div className="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
                     <div className="p-8 flex flex-col md:flex-row justify-between items-center gap-4">
                         <div className="flex gap-4 items-center">
@@ -77,87 +76,64 @@ const HODReports = () => {
                             <button className="bg-[#008BA9] text-white px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 cursor-pointer hover:bg-[#008BA9]/90 transition-all">
                                 <Download size={16} /> Export CSV
                             </button>
-                        </CSVLink> 
+                        </CSVLink>
                     </div>
-                    <div className="overflow-x-auto">
-                        <table className="w-full">
-                            <thead className="bg-[#008BA9] text-white">
-                                <tr className="text-left text-[10px] font-black uppercase tracking-widest">
-                                    <th className="py-5 px-6">Asset Identification</th>
-                                    <th className="py-5 px-4">Category</th>
-                                    <th className="py-5 px-4">Qty</th>
-                                    <th className="py-5 px-4">Status</th>
-                                    <th className="py-5 px-4">Assigend To</th>
-                                    <th className="py-5 px-4">Price</th>
-                                    <th className="py-5 px-4">Condition</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-50">
-                                {assets?.length > 0 ? assets?.map((asset, i) => (
-                                    <tr key={i} className={`transition-colors group ${i % 2 === 0 ? "bg-white" : "bg-slate-50/40"} hover:bg-cyan-50/40`}
-                                    >
-                                        {/* 1. Identification */}
-                                        <td className="py-5 px-6">
-                                            <p className="text-sm font-black text-slate-800 uppercase italic leading-tight tracking-tight"> {asset?.name} </p>
-                                            <p className="text-[9px] font-bold text-slate-400 mt-1 tracking-widest"> ID: {asset?._id.slice(-6).toUpperCase()}# </p>
-                                        </td>
+                    {/* Asset Table */}
+                    <DataTable
+                        data={assets}
+                        tableHeader={["Asset Identification", "Category", "Qty", "Status", "Assigend To", "Price", "Condition"]}
+                        renderRow={(asset, i) => (
+                            <tr key={i} className={`transition-colors group ${i % 2 === 0 ? "bg-white" : "bg-slate-50/40"} hover:bg-cyan-50/40`}
+                            >
+                                {/* 1. Identification */}
+                                <td className="py-5 px-6">
+                                    <p className="text-sm font-black text-slate-800 uppercase italic leading-tight tracking-tight"> {asset?.name} </p>
+                                    <p className="text-[9px] font-bold text-slate-400 mt-1 tracking-widest"> ID: {asset?._id.slice(-6).toUpperCase()}# </p>
+                                </td>
 
-                                        {/* 2. Category */}
-                                        <td className="py-5 px-4">
-                                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tight"> {asset?.category} </span>
-                                        </td>
+                                {/* 2. Category */}
+                                <td className="py-5 px-4">
+                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tight"> {asset?.category} </span>
+                                </td>
 
-                                        {/* 3. Quantity */}
-                                        <td className="py-5 px-4">
-                                            <span className="text-sm font-black text-slate-800 italic"> {asset.quantity} </span>
-                                        </td>
+                                {/* 3. Quantity */}
+                                <td className="py-5 px-4">
+                                    <span className="text-sm font-black text-slate-800 italic"> {asset.quantity} </span>
+                                </td>
 
-                                        {/* 4. Status Pill */}
-                                        <td className="py-5 px-4">
-                                            <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold
+                                {/* 4. Status Pill */}
+                                <td className="py-5 px-4">
+                                    <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold
                        ${asset?.status === "Available"
-                                                    ? "bg-emerald-100 text-emerald-700"
-                                                    : asset?.status === "Assigned"
-                                                        ? "bg-blue-100 text-blue-700"
-                                                        : "bg-amber-100 text-amber-700"
-                                                }`}>
-                                                <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${asset?.status === "Available" ? "bg-emerald-500" :
-                                                    asset?.status === "Assigned" ? "bg-blue-500" : "bg-amber-500"
-                                                    }`} />
-                                                <span className="text-[10px] font-black uppercase italic">{asset?.status}</span>
-                                                 </div>
-                                        </td>
+                                            ? "bg-emerald-100 text-emerald-700"
+                                            : asset?.status === "Assigned"
+                                                ? "bg-blue-100 text-blue-700"
+                                                : "bg-amber-100 text-amber-700"
+                                        }`}>
+                                        <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${asset?.status === "Available" ? "bg-emerald-500" :
+                                            asset?.status === "Assigned" ? "bg-blue-500" : "bg-amber-500"
+                                            }`} />
+                                        <span className="text-[10px] font-black uppercase italic">{asset?.status}</span>
+                                    </div>
+                                </td>
 
-                                        {/* 5. Assigned To (Holder) */}
-                                        <td className="py-5 px-4">
-                                            <p className="text-[10px] font-black text-slate-700  italic"> {asset?.assignedTo?.name ? `Prof. ${asset?.assignedTo?.name}` : <span className="text-slate-300">Unassigned</span>} </p>
-                                        </td>
+                                {/* 5. Assigned To (Holder) */}
+                                <td className="py-5 px-4">
+                                    <p className="text-[10px] font-black text-slate-700  italic"> {asset?.assignedTo?.name ? `Prof. ${asset?.assignedTo?.name}` : <span className="text-slate-300">Unassigned</span>} </p>
+                                </td>
 
-                                        {/* 6. Price/Value */}
-                                        <td className="py-5 px-4">
-                                            <span className="text-sm font-black text-slate-800"> RS. {asset?.price?.toLocaleString()} </span>
-                                        </td>
+                                {/* 6. Price/Value */}
+                                <td className="py-5 px-4">
+                                    <span className="text-sm font-black text-slate-800"> RS. {asset?.price?.toLocaleString()} </span>
+                                </td>
 
-                                        {/* 7. Health (Fixed Condition) */}
-                                        <td className="py-5 px-4">
-                                            <span className={`flex items-center justify-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-black uppercase ${asset?.condition === "New" ? "text-emerald-600 bg-emerald-50" : asset?.condition === "Maintenance" ? "text-blue-600 bg-blue-50" : asset?.condition === "Damaged" ? "text-orange-600 bg-orange-50" : "text-red-600 bg-red-50"}`}> {asset?.condition} </span>
-                                        </td>
-
-
-                                    </tr>
-                                )) : (
-                                    <tr>
-                                        <td colSpan="8" className="py-20 text-center">
-                                            <div className="flex flex-col items-center opacity-20">
-                                                <Package size={48} />
-                                                <p className="mt-2 text-sm font-black uppercase">No assets found</p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
+                                {/* 7. Health (Fixed Condition) */}
+                                <td className="py-5 px-4">
+                                    <span className={`flex items-center justify-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-black uppercase ${asset?.condition === "New" ? "text-emerald-600 bg-emerald-50" : asset?.condition === "Maintenance" ? "text-blue-600 bg-blue-50" : asset?.condition === "Damaged" ? "text-orange-600 bg-orange-50" : "text-red-600 bg-red-50"}`}> {asset?.condition} </span>
+                                </td>
+                            </tr>
+                        )}
+                    />
                 </div>
             </div>
         );

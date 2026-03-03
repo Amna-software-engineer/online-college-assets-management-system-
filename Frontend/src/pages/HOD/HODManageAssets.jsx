@@ -12,6 +12,8 @@ import { useSelector } from 'react-redux';
 import { Doughnut } from 'react-chartjs-2';
 import TransferAssetModal from '../../components/HOD/TransferAssetModal';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, } from 'chart.js';
+import AssetTable from '../../components/DataTable';
+import DataTable from '../../components/DataTable';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -148,23 +150,11 @@ const HODManageAssets = () => {
       </div>
       {/*4. Asset List Table */}
       <div div className="bg-white rounded-3xl border border-slate-100 shadow-md overflow-hidden" >
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-[#008BA9] text-white">
-              <tr className="text-left text-[10px] font-black uppercase tracking-widest">
-                <th className="py-5 px-6">Asset Identification</th>
-                <th className="py-5 px-4">Category</th>
-                <th className="py-5 px-4">Qty</th>
-                <th className="py-5 px-4">Status</th>
-                <th className="py-5 px-4">Assigend To</th>
-                <th className="py-5 px-4">Price</th>
-                <th className="py-5 px-4">Condition</th>
-                <th className="py-5 px-6 text-center">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-50">
-              {filteredAssets.length > 0 ? filteredAssets.map((asset, i) => (
-                <tr key={i} className={`transition-colors group ${i % 2 === 0 ? "bg-white" : "bg-slate-50/40"} hover:bg-cyan-50/40`}
+       <DataTable 
+       data={filteredAssets} 
+       tableHeader={["Asset Identification", "Category", "Qty", "Status", "Assigned To", "Price", "Condition", "Actions"]} 
+       renderRow={(asset,i)=> 
+         <tr key={i} className={`transition-colors group ${i % 2 === 0 ? "bg-white" : "bg-slate-50/40"} hover:bg-cyan-50/40`}
                 >
                   {/* 1. Identification */}
                   <td className="py-5 px-6">
@@ -240,19 +230,8 @@ const HODManageAssets = () => {
                     </div>
                   </td>
                 </tr>
-              )) : (
-                <tr>
-                  <td colSpan="8" className="py-20 text-center">
-                    <div className="flex flex-col items-center opacity-20">
-                      <Package size={48} />
-                      <p className="mt-2 text-sm font-black uppercase">No assets found</p>
-                    </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+       }
+       />
 
 
 

@@ -6,6 +6,8 @@ import { useDeleteRequest, useRequestAsset, useUpdateRequest } from '../../api/r
 import { useNavigate } from 'react-router-dom';
 import ViewDetailsModal from '../../components/HOD/ViewDetailsModal';
 import { useDeleteFaculty } from '../../api/asset.api';
+import AssetTable from '../../components/DataTable';
+import DataTable from '../../components/DataTable';
 
 const HODRequest = () => {
   const user = useSelector(state => state?.auth?.currUser);
@@ -111,25 +113,15 @@ const HODRequest = () => {
         {/* Request List Table */}
 
         <div div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
-          <table className="w-full">
-            <thead className="bg-cyan-600 text-white">
-              <tr className='uppercase tracking-widest text-left text-[10px] font-black'>
-                <th className="py-5 px-6">Asset & Specs</th>
-                <th className="p-6 text-center">Qty</th>
-                <th className="p-6">Priority</th>
-                <th className="p-6">Status</th>
-                <th className="p-6 text-right">Date</th>
-                <th className="p-6 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-50">
-              {requestList?.length > 0 ?
-                (requestList?.filter((req) => {
-                  if (activeTab === "history") return req.requestType === "New Asset";
-                  if (activeTab === "reports") return req.requestType === "Maintenance";
-                  return false;
-                }).map((req, index) => (
-                  <tr key={index} className={`transition-colors group ${index % 2 === 0 ? "bg-white" : "bg-slate-50/50"} hover:bg-cyan-50/30`}>
+          <DataTable 
+          data={requestList?.filter(req=> {
+            if (activeTab === "history") return req.requestType === "New Asset";
+            if (activeTab === "reports") return req.requestType === "Maintenance";
+            return false;
+          } )}
+           tableHeader={["Asset & Specs", "Qty", "Priority", "Status", "Date", "Actions"]} 
+          renderRow={(req,index)=>  
+          <tr key={index} className={`transition-colors group ${index % 2 === 0 ? "bg-white" : "bg-slate-50/50"} hover:bg-cyan-50/30`}>
                     <td className="p-6">
                       <p className="text-sm font-black text-slate-900 italic uppercase">{req.itemName}</p>
                       <p className="text-[10px] font-bold text-slate-500 truncate max-w-50 mt-1">
@@ -170,20 +162,9 @@ const HODRequest = () => {
                         }} className="hover:text-cyan-600 cursor-pointer transition-colors" />
                       </div>
                     </td>}
-                  </tr>)
-                )
-                ) : (
-                  <tr>
-                    <td colSpan="6" className="p-20 text-center">
-                      <div className="flex flex-col items-center gap-2 opacity-30">
-                        <AlertCircle size={40} />
-                        <p className="text-[10px] font-black uppercase italic">No requests found</p>
-                      </div>
-                    </td>
-                  </tr>
-                )}
-            </tbody>
-          </table>
+                  </tr>}/>
+         
+         
         </div>
 
       </div>
@@ -197,24 +178,12 @@ const HODRequest = () => {
               Total: {requestList?.length || 0}
             </span>
           </div>
-          <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
-            <table className="w-full">
-              <thead className="bg-cyan-600 text-white">
-                <tr className="uppercase tracking-widest text-left text-[10px] font-black">
-                  <th className="py-5 px-6">Faculty Name</th>
-                  <th className="p-6 text-center">Email</th>
-                  <th className="p-6">Department</th>
-                  <th className="p-6">Status</th>
-                  <th className="p-6 text-right">Date</th>
-                  <th className="p-6 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-50">
-                {requestList?.filter(req => req.requestType === "Faculty Request").length > 0 ? (
-                  requestList
-                    .filter(req => req.requestType === "Faculty Request")
-                    .map((req, index) => (
-                      <tr key={index} className={`transition-colors group ${index % 2 === 0 ? "bg-white" : "bg-slate-50/50"} hover:bg-cyan-50/30`}>
+          {/* Faculty Requests Table */}
+          <DataTable 
+          data={requestList?.filter(req => req.requestType === "Faculty Request")}
+          tableHeader={["Faculty Name", "Email", "Department", "Status", "Date", "Actions"]}
+          renderRow={(req,index)=>(
+             <tr key={index} className={`transition-colors group ${index % 2 === 0 ? "bg-white" : "bg-slate-50/50"} hover:bg-cyan-50/30`}>
                         <td className="p-6 font-black">{req.itemName}</td> {/* name field */}
                         <td className="p-6 text-center">{req.email}</td>
                         <td className="p-6">{req.department}</td>
@@ -232,21 +201,8 @@ const HODRequest = () => {
                         </td>
                       )}
                       </tr>
-                    ))
-                ) : (
-                  <tr>
-                    <td colSpan="6" className="p-20 text-center">
-                      <div className="flex flex-col items-center gap-2 opacity-30">
-                        <AlertCircle size={40} />
-                        <p className="text-[10px] font-black uppercase italic">No faculty requests found</p>
-                      </div>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-
+          )}
+          />
         </div>
       )}
       {/* Request Form */}
