@@ -7,6 +7,7 @@ import MainLayout from "./components/MainLayout";
 import HODRequest from "./pages/HOD/HODRequest";
 import HODManageAssets from "./pages/HOD/HODManageAssets";
 import HODReport from "./pages/HOD/HODReport";
+import { ProtectRoute } from "./components/ProtectRoute";
 
 
   const router = createBrowserRouter([
@@ -16,23 +17,23 @@ import HODReport from "./pages/HOD/HODReport";
       children:[
         {
           path: "/principal/dashboard",
-          element: <PrincipalDashboard/>
+          element: <ProtectRoute><PrincipalDashboard/></ProtectRoute>
         },
         {
           path:"/principal/college-assets",
-          element: <h1>College Assets Page</h1>
+          element: <ProtectRoute><h1>College Assets Page</h1></ProtectRoute>
         },
         {
           path:"/principal/departments",
-          element: <h1>Departments Page</h1>
+          element: <ProtectRoute><h1>Departments Page</h1></ProtectRoute>
         },
         {
           path:"/principal/requests",
-          element: <h1>Requests Page</h1>
+          element: <ProtectRoute><h1>Requests Page</h1></ProtectRoute>
         },
         {
           path:"/principal/reports",
-          element: <h1>Reports Page</h1>
+          element: <ProtectRoute><h1>Reports Page</h1></ProtectRoute>
         },
       ]
     },
@@ -42,19 +43,19 @@ import HODReport from "./pages/HOD/HODReport";
       children:[
         {
           path:"/hod/dashboard",
-          element: <HODDashboard/>
+        element: <ProtectRoute><HODDashboard/></ProtectRoute>
         },
         {
           path:"/hod/manage-assets",
-          element: <HODManageAssets/>
+          element: <ProtectRoute><HODManageAssets/></ProtectRoute>
         },
         {
           path:"/hod/request",
-          element: <HODRequest/>
+          element: <ProtectRoute><HODRequest/></ProtectRoute>
         },
         {
           path:"/hod/reports",
-          element: <HODReport/>
+          element: <ProtectRoute><HODReport/></ProtectRoute>
         }
       ]
     },
