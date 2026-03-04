@@ -12,3 +12,6 @@ export const requestEndPoints = {
     updateRequest: (id) => `/request/${id}`,
     deleteRequest: (id) => `/request/${id}`,
 }
+export const deptEndPoints = {
+    request: "/department",
+}

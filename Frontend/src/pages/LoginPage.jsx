@@ -5,6 +5,7 @@ import { UseLogin } from "../api/auth.api";
 import Loader from "../components/Loader";
 import { useGetAllAsset, useGetAllFaculty } from "../api/asset.api";
 import { useGetAllRequest } from "../api/request.api";
+import { useGetAllDept } from "../api/department.api";
 
 
 const LoginForm = () => {
@@ -17,6 +18,7 @@ const LoginForm = () => {
     const { getAssets } = useGetAllAsset();
     const { getRequests } = useGetAllRequest();
     const { getFaculty } = useGetAllFaculty();
+    const { getDepts } = useGetAllDept();
 
     const HandleSubmit = async (formData) => {
         const response = await login(formData.email, formData.password);
@@ -25,7 +27,7 @@ const LoginForm = () => {
 
             if (response?.user?.role === "Principal") {
                 navigate("/principal/dashboard");
-                  await Promise.all([ getAssets(),  getRequests(),  getFaculty()])
+                  await Promise.all([ getAssets(),  getRequests(),  getFaculty(), getDepts()])
             } else if (response?.user?.role === "HOD") {
                 navigate("/hod/dashboard");
                await Promise.all([ getAssets(),  getRequests(),  getFaculty()])

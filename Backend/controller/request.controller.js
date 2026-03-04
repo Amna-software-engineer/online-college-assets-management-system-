@@ -69,13 +69,12 @@ export const getRequests = async (req, res) => {
     const authHeader = req.headers.authorization;
     const token = authHeader && authHeader.split(" ")[1];
     const decoded = jwt.verify(token, JWT_ACCESS_SECRET);
-    console.log('decoded req', decoded.department._id);
 
     try {
         let requestList = [];
-        let dptID = decoded.department._id
-
+        
         if (decoded.role === "HOD") {
+            let dptID = decoded.department._id
             requestList = await requestModel.find({ department: dptID }).populate("RequestorId", "name");
         } else if (decoded.role === "Principal") {
             requestList = await requestModel.find().populate("RequestorId", "name");

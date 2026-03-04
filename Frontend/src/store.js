@@ -3,12 +3,14 @@ import authReducer from "./features/auth.slice";
 import assetReducer from "./features/asset.slice";
 import requestReducer from "./features/request.slice";
 import facultyReducer from "./features/faculty.slice";
+import deptReducer from "./features/department.slice";
 
 export const store = configureStore({
     reducer: { 
         auth: authReducer, 
         assets: assetReducer,
         requests: requestReducer,
-        faculty: facultyReducer
+        faculty: facultyReducer,
+        departments: deptReducer
     }
 })
