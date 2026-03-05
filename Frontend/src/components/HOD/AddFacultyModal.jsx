@@ -10,7 +10,7 @@ const AddFacultyModal = ({ isOpen, onClose }) => {
   const user = useSelector(state => state.auth.currUser);
   // RequestorId, department, itemName, email
   const [formData, setFormData] = useState({
-    RequestorId: user?._id || '',
+    RequestorId: user?.userId || '',
     itemName: '', //for name of faculty
     email: '',
     department: user?.department._id || '',

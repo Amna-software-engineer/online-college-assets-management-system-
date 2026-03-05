@@ -13,6 +13,7 @@ const PrincipalDashboard = () => {
   const { requestList } = useSelector(state => state?.requests);
   const { facultyList } = useSelector(state => state?.faculty);
   const { deptList } = useSelector(state => state?.departments);
+  
   const totalAssetsValue = assetsList && assetsList?.reduce((total, asset) => total + asset?.price * asset?.quantity, 0) || 0;
   const totalLength = assetsList?.length;
   const funtionalAsset = assetsList?.filter(asset => asset?.condition === "New").length; console.log("funtionalAsset", funtionalAsset);
@@ -20,7 +21,7 @@ const PrincipalDashboard = () => {
   const MaintenanceHealth = totalLength > 0 ? (funtionalAsset / totalLength) * 100 : 0; //formula= (functional assets /total assets)*100
 
   const totalUnits = assetsList?.reduce((total, curr) => total + (curr?.quantity || 0), 0) || 0;
-  const colors = [ '#06b6d4', '#34d399', '#1e293b', '#475569', '#0d9488', '#f59e0b', '#ef4444', '#8b5cf6', '#10b981', '#3b82f6' ];
+  const colors = ['#06b6d4', '#34d399', '#1e293b', '#475569', '#0d9488', '#f59e0b', '#ef4444', '#8b5cf6', '#10b981', '#3b82f6'];
   // Stats Data
   const stats = [
     { label: 'College Assets', value: totalUnits, icon: <Package className="text-cyan-600" />, bg: 'bg-cyan-50' },
@@ -40,53 +41,55 @@ const PrincipalDashboard = () => {
   // chart data
   const deptAssets = deptList.map((dept, i) => (
     {
-      label: dept.name,
-      val: assetsList.reduce((total, currAsset) => {
-        console.log(dept._id, currAsset.department);
-
-        if (dept._id == currAsset.department) {
+      label: dept?.name,
+      val: assetsList?.reduce((total, currAsset) => {
+        console.log(dept?._id === currAsset?.department?._id);
+        
+        if (dept?._id === currAsset?.department?._id) {
           total = total + currAsset.quantity;
           return total
         }
-
+        return total
       }, 0),
       color: colors[i % colors.length]
     }
   ))
-const activityLog = [
-  ...requestList
-    ?.filter(req => ["New Asset", "Maintenance"].includes(req.requestType))
-    .map(req => ({
-      type: 'Requested',
-      asset: req?.itemName,
-      user: `Prof. ${req?.RequestorId?.name || "Unknown"}`,
-      time: req?.createdAt, // <-- original date
-      displayTime: formatDistanceToNow(new Date(req?.createdAt), { addSuffix: true }),
-      color: 'text-blue-600 bg-blue-50'
-    })),
-  ...assetsList
-    ?.filter(asset => asset.assignedTo)
-    .map(asset => ({
-      type: 'Assigned',
-      asset: asset?.name,
-      user: asset?.assignedTo?.name ? `Prof. ${asset?.assignedTo?.name}` : "Unassigned",
-      time: asset?.createdAt,
-      displayTime: formatDistanceToNow(new Date(asset?.createdAt), { addSuffix: true }),
-      color: 'text-cyan-600 bg-cyan-50'
-    })),
-  ...assetsList
-    ?.filter(asset => asset?.condition === "Damaged" || asset?.condition === "Lost")
-    .map(asset => ({
-      type: 'Reported',
-      asset: asset?.name,
-      user: asset?.assignedTo?.name ? `Prof. ${asset?.assignedTo?.name}` : "Unassigned",
-      time: asset?.createdAt,
-      displayTime: formatDistanceToNow(new Date(asset?.createdAt), { addSuffix: true }),
-      color: 'text-red-600 bg-red-50'
-    }))
-]
-.sort((a, b) => new Date(b.time) - new Date(a.time)) //Sort by most recent and limit to 5 items
-.slice(0, 5);
+  console.log("deptAssets",deptAssets);
+  
+  const activityLog = [
+    ...requestList
+      ?.filter(req => ["New Asset", "Maintenance"].includes(req.requestType))
+      .map(req => ({
+        type: 'Requested',
+        asset: req?.itemName,
+        user: `Prof. ${req?.RequestorId?.name || "Unknown"}`,
+        time: req?.createdAt, // <-- original date
+        displayTime: formatDistanceToNow(new Date(req?.createdAt), { addSuffix: true }),
+        color: 'text-blue-600 bg-blue-50'
+      })),
+    ...assetsList
+      ?.filter(asset => asset?.assignedTo)
+      .map(asset => ({
+        type: 'Assigned',
+        asset: asset?.name,
+        user: asset?.assignedTo?.name ? `Prof. ${asset?.assignedTo?.name}` : "Unassigned",
+        time: asset?.createdAt,
+        displayTime: formatDistanceToNow(new Date(asset?.createdAt), { addSuffix: true }),
+        color: 'text-cyan-600 bg-cyan-50'
+      })),
+    ...assetsList
+      ?.filter(asset => asset?.condition === "Damaged" || asset?.condition === "Lost")
+      .map(asset => ({
+        type: 'Reported',
+        asset: asset?.name,
+        user: asset?.assignedTo?.name ? `Prof. ${asset?.assignedTo?.name}` : "Unassigned",
+        time: asset?.createdAt,
+        displayTime: formatDistanceToNow(new Date(asset?.createdAt), { addSuffix: true }),
+        color: 'text-red-600 bg-red-50'
+      }))
+  ]
+    .sort((a, b) => new Date(b.time) - new Date(a.time)) //Sort by most recent and limit to 5 items
+    .slice(0, 5);
 
 
 
@@ -98,7 +101,7 @@ const activityLog = [
 
       {/* Category and Quick actions */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* 2. Inventory Distribution (Visual Representation) */}
+        {/* 2. Inventory Distribution (clg Visual Representation) */}
         <div className="lg:col-span-2 bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-50 relative overflow-hidden">
           {deptAssets && deptAssets.length > 0 ? (
             <Doughnut

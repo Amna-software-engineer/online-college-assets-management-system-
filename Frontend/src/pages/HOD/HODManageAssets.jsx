@@ -30,9 +30,8 @@ const HODManageAssets = () => {
   const [selectedAsset, setSelectedAsset] = useState(null);
   const { assetsList } = useSelector(state => state?.assets);
   const { facultyList } = useSelector(state => state?.faculty);
-  const [activeFacultyFilter, setActiveFacultyFilter] = useState(null);
+  const [activeFacultyFilter, setActiveFacultyFilter] = useState("All");
   const [assetDistribution, setAssetDistribution] = useState({ totalUnits: 0, assignedUnits: 0, availableUnits: 0 });
-  const [openDropdown, setOpenDropdown] = useState(null);
 
   // category data
   const category = [
@@ -45,8 +44,15 @@ const HODManageAssets = () => {
 
 
   // stats cards data
-  const totalUnits = assetsList?.reduce((total, curr) => total + (curr?.quantity || 0), 0) || 0;
-  const assignedUnits = assetsList?.filter(a => a?.assignedTo).reduce((total, curr) => total + (curr?.quantity || 0), 0) || 0;
+  const totalUnits = assetsList?.reduce((total, curr) =>
+    selectedAsset
+      ? (selectedAsset?.name === curr?.name ? total + curr.quantity : total)
+      : total + curr.quantity
+    , 0) || 0;
+  const assignedUnits = assetsList?.filter(a =>
+    selectedAsset
+      ? (selectedAsset?.name === a?.name ? a.assignedTo : false)
+      : a?.assignedTo).reduce((total, curr) => total + (curr?.quantity || 0), 0) || 0;
   const availableUnits = totalUnits - assignedUnits;
   const stats = [
     { label: 'Total Units', value: totalUnits, icon: <Package className="text-cyan-600" />, bg: 'bg-cyan-50' },
@@ -58,7 +64,7 @@ const HODManageAssets = () => {
     const matchesSearch = a?.name?.toLowerCase().includes(searchTerm.toLowerCase())
       || a?._id?.toLowerCase().includes(searchTerm.toLowerCase());//for search by name/id
     const matchesCategory = selectedCategory === "All" || a?.category === selectedCategory;
-    const matchesFacultyFilter = !activeFacultyFilter || (a?.assignedTo && a?.assignedTo._id === activeFacultyFilter);
+    const matchesFacultyFilter = activeFacultyFilter === "All" || (a?.assignedTo && a?.assignedTo._id === activeFacultyFilter);
     return matchesSearch && matchesCategory && matchesFacultyFilter;
   });
 
@@ -129,113 +135,111 @@ const HODManageAssets = () => {
       <div className="space-y-3">
         <div className="flex justify-between items-center px-2">
           <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Department Faculty</h3>
-          <button onClick={() => setIsModalOpen(true)} className="text-[10px] font-black text-cyan-600 uppercase">+ Add Faculty</button>
+          <button onClick={() => setIsModalOpen(true)} className="text-[10px] font-black text-cyan-600 uppercase cursor-pointer">+ Add Faculty</button>
         </div>
         <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
+          <div className={`shrink-0 px-6 py-3 rounded-2xl border cursor-pointer font-bold text-xs transition-all
+              ${activeFacultyFilter === "All" ? "bg-slate-800 text-white shadow-lg" : "bg-white text-slate-600 border-slate-100"}`} onClick={() => setActiveFacultyFilter("All")}> All Assets
+          </div>
           {facultyList?.map((faculty, i) => (
             <div
               key={i}
               onClick={() => setActiveFacultyFilter(faculty?._id)}
-              className={`shrink-0 flex items-center gap-3 p-2 pr-4 rounded-2xl border transition-all cursor-pointer group ${activeFacultyFilter === faculty?._id ? "bg-cyan-50 border-cyan-300 shadow-md" : "bg-white border-slate-100 hover:border-cyan-200"} `} >
-              <div className="w-8 h-8 rounded-xl bg-slate-800 text-cyan-400 flex items-center justify-center font-black text-[10px]">
-                {faculty?.name[0].toUpperCase()}
-              </div>
-              <span className="text-xs font-bold text-slate-700">{faculty?.name}</span>
+              className={`shrink-0 flex items-center gap-3 px-6 py-3 rounded-2xl border transition-all cursor-pointer 
+                ${activeFacultyFilter === faculty?._id ? "bg-cyan-600 text-white border-cyan-600 shadow-md" : "bg-white border-slate-100 hover:border-cyan-200"}`}
+            >
+              <span className="text-xs font-bold">{faculty?.name}</span>
             </div>
           ))}
-          <div className={`shrink-0 flex items-center justify-center p-2 pr-4 rounded-2xl border cursor-pointer  bg-slate-800 text-white `} onClick={() => setActiveFacultyFilter(null)}> Clear
-          </div>
+
 
         </div>
       </div>
       {/*4. Asset List Table */}
       <div div className="bg-white rounded-3xl border border-slate-100 shadow-md overflow-hidden" >
-       <DataTable 
-       data={filteredAssets} 
-       tableHeader={["Asset Identification", "Category", "Qty", "Status", "Assigned To", "Price", "Condition", "Actions"]} 
-       renderRow={(asset,i)=> 
-         <tr key={i} className={`transition-colors group ${i % 2 === 0 ? "bg-white" : "bg-slate-50/40"} hover:bg-cyan-50/40`}
-                >
-                  {/* 1. Identification */}
-                  <td className="py-5 px-6">
-                    <p className="text-sm font-black text-slate-800 uppercase italic leading-tight tracking-tight">
-                      {asset?.name}
-                    </p>
-                    <p className="text-[9px] font-bold text-slate-400 mt-1 tracking-widest">
-                      ID: {asset?._id.slice(-6).toUpperCase()}#
-                    </p>
-                  </td>
+        <DataTable
+          data={filteredAssets}
+          tableHeader={["Asset Identification", "Category", "Qty", "Status", "Assigned To", "Price", "Condition", "Actions"]}
+          renderRow={(asset, i) =>
+            <tr key={i} className={`transition-colors group ${i % 2 === 0 ? "bg-white" : "bg-slate-50/40"} hover:bg-cyan-50/40`}
+            >
+              {/* 1. Identification */}
+              <td className="py-5 px-6">
+                <p className="text-sm font-black text-slate-800 uppercase italic leading-tight tracking-tight">
+                  {asset?.name}
+                </p>
+                <p className="text-[9px] font-bold text-slate-400 mt-1 tracking-widest">
+                  ID: {asset?._id.slice(-6).toUpperCase()}#
+                </p>
+              </td>
 
-                  {/* 2. Category */}
-                  <td className="py-5 px-4">
-                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">
-                      {asset?.category}
-                    </span>
-                  </td>
+              {/* 2. Category */}
+              <td className="py-5 px-4">
+                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">
+                  {asset?.category}
+                </span>
+              </td>
 
-                  {/* 3. Quantity */}
-                  <td className="py-5 px-4">
-                    <span className="text-sm font-black text-slate-800 italic">
-                      {asset.quantity}
-                    </span>
-                  </td>
+              {/* 3. Quantity */}
+              <td className="py-5 px-4">
+                <span className="text-sm font-black text-slate-800 italic">
+                  {asset.quantity}
+                </span>
+              </td>
 
-                  {/* 4. Status Pill */}
-                  <td className="py-5 px-4">
-                    <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold
-                       ${asset?.status === "Available"
-                        ? "bg-emerald-100 text-emerald-700"
-                        : asset?.status === "Assigned"
-                          ? "bg-blue-100 text-blue-700"
-                          : "bg-amber-100 text-amber-700"
-                      }`}>
-                      <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${asset?.status === "Available" ? "bg-emerald-500" :
-                        asset?.status === "Assigned" ? "bg-blue-500" : "bg-amber-500"
-                        }`} />
-                      <span className="text-[10px] font-black uppercase italic">{asset?.status}</span>
-                    </div>
-                  </td>
+              {/* 4. Status Pill */}
+              <td className="py-5 px-4">
+                <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold
+                       ${asset?.deptStatus === "Available"
+                    ? "bg-emerald-100 text-emerald-700"
+                    : asset?.deptStatus === "Assigned"
+                      ? "bg-blue-100 text-blue-700"
+                      : "bg-amber-100 text-amber-700"
+                  }`}>
+                  <span className={`w-1.5 h-1.5 rounded-full animate-pulse
+                     ${asset?.deptStatus === "Available" ? "bg-emerald-500" : asset?.deptStatus === "Assigned" ? "bg-blue-500" : "bg-amber-500" }`} />
+                  <span className="text-[10px] font-black uppercase italic">{asset?.deptStatus}</span>
+                </div>
+              </td>
 
-                  {/* 5. Assigned To (Holder) */}
-                  <td className="py-5 px-4">
-                    <p className="text-[10px] font-black text-slate-700  italic">
-                      {asset?.assignedTo?.name ? `Prof. ${asset?.assignedTo?.name}` : <span className="text-slate-300">Unassigned</span>}
-                    </p>
-                  </td>
+              {/* 5. Assigned To (Holder) */}
+              <td className="py-5 px-4">
+                <p className="text-[10px] font-black text-slate-700  italic">
+                  {asset?.assignedTo?.name ? `Prof. ${asset?.assignedTo?.name}` : <span className="text-slate-300">Unassigned</span>}
+                </p>
+              </td>
 
-                  {/* 6. Price/Value */}
-                  <td className="py-5 px-4">
-                    <span className="text-sm font-black text-slate-800">
-                      RS. {asset?.price?.toLocaleString()}
-                    </span>
-                  </td>
+              {/* 6. Price/Value */}
+              <td className="py-5 px-4">
+                <span className="text-sm font-black text-slate-800">
+                  RS. {asset?.price?.toLocaleString()}
+                </span>
+              </td>
 
-                  {/* 7. Health (Fixed Condition) */}
-                  <td className="py-5 px-4">
-                    <span className={`flex items-center justify-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-black uppercase ${asset?.condition === "New" ? "text-emerald-600 bg-emerald-50" :
-                      asset?.condition === "Maintenance" ? "text-blue-600 bg-blue-50" :
-                        asset?.condition === "Damaged" ? "text-orange-600 bg-orange-50" :
-                          "text-red-600 bg-red-50"}`}>
-                      {asset?.condition}
-                    </span>
-                  </td>
+              {/* 7. Health (Fixed Condition) */}
+              <td className="py-5 px-4">
+                <span className={`flex items-center justify-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-black uppercase ${asset?.condition === "New" ? "text-emerald-600 bg-emerald-50" :
+                  asset?.condition === "Maintenance" ? "text-blue-600 bg-blue-50" :
+                    asset?.condition === "Damaged" ? "text-orange-600 bg-orange-50" :
+                      "text-red-600 bg-red-50"}`}>
+                  {asset?.condition}
+                </span>
+              </td>
 
-                  {/* 8. Actions */}
-                  <td className="py-5 px-6">
-                    <div className="flex items-center justify-center gap-4 text-slate-400 group-hover:text-slate-700 transition-all">
-                      <Eye size={18} onClick={() => { handleViewDetails(asset); calculateAssetDistribtuion(asset); }} className="hover:text-cyan-600 cursor-pointer transition-colors" />
+              {/* 8. Actions */}
+              <td className="py-5 px-6">
+                <div className="flex items-center justify-center gap-4 text-slate-400 group-hover:text-slate-700 transition-all">
+                  <Eye size={18} onClick={() => { handleViewDetails(asset); calculateAssetDistribtuion(asset); }} className="hover:text-cyan-600 cursor-pointer transition-colors" />
 
-                      {asset?.status === "Available" && <ArrowLeftRight onClick={() => handleTransferAsset(asset)} size={18} className="hover:text-blue-600  hover:scale-110 transition-transform cursor-pointer" />}
-                      {/* <Trash2 size={18} className="hover:text-red-600 hover:scale-110 transition-transform cursor-pointer" /> */}
-                    </div>
-                  </td>
-                </tr>
-       }
-       />
-
-
-
-
+                  {<ArrowLeftRight onClick={() => {
+                    setSelectedAsset(asset);
+                    setIsTransferModelOpen(true);
+                  }} size={18} className={`${asset?.deptStatus === "Available" ? "block" : "opacity-0"} hover:text-blue-600  hover:scale-110 transition-transform cursor-pointer`} />}
+                </div>
+              </td>
+            </tr>
+          }
+        />
 
         {/* Modals Rendering */}
         <ViewDetailsModal isOpen={showDetails} onClose={() => setShowDetails(false)} title="Asset Details" subTitle={selectedAsset?.name}>

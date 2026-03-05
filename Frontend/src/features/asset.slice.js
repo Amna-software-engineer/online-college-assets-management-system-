@@ -7,7 +7,6 @@ const assetSlice = createSlice({
     initialState: {assetsList:  savedAssets && savedAssets !== "undefined" ? savedAssets : []},
     reducers: {
         setAssetsList: (state, action) => {
-            console.log(action.payload);   
             state.assetsList = action.payload;
             localStorage.setItem("assetsList", JSON.stringify(action.payload));
         },

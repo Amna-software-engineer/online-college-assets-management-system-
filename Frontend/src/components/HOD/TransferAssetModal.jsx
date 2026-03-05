@@ -2,15 +2,20 @@ import React, { useState } from 'react';
 import { X, ArrowRightLeft, User, ShieldCheck, ChevronDown, CheckCircle2, Hash } from 'lucide-react';
 import { useTransferAsset } from '../../api/asset.api';
 import Loader from '../Loader';
+import { useSelector } from 'react-redux';
 
-const TransferAssetModal = ({ isOpen, onClose, asset, facultyList }) => {
-  console.log("asset ",asset);
-  
+const TransferAssetModal = ({ isOpen, onClose, asset, deptTransfer }) => {
+  const { facultyList } = useSelector(state => state?.faculty);
+  const { deptList: departmentsList } = useSelector(state => state?.departments);
+
+  console.log("asset ", asset);
+
   const [formData, setFormData] = useState({
     assetId: asset?._id,
     quantity: 0,
     condition: "",
-    assignedTo: ""
+    assignedTo: "",
+    department: ""
 
   });
   const { transferAsset, loading } = useTransferAsset();
@@ -19,7 +24,7 @@ const TransferAssetModal = ({ isOpen, onClose, asset, facultyList }) => {
   const handleSubmit = async (e, formData) => {
 
     e.preventDefault();
-    formData.assetId = asset._id; // Ensure assetId is included in the formData
+    formData.assetId = asset._id; 
     console.log("form Data transfer asset", formData);
     const response = await transferAsset(formData);
     onClose()
@@ -65,12 +70,15 @@ const TransferAssetModal = ({ isOpen, onClose, asset, facultyList }) => {
                 <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-[#0088A8]" size={16} />
                 <select
                   required
-                  value={formData.assignedTo}
-                  onChange={(e) => setFormData({ ...formData, assignedTo: e.target.value })}
+                  value={ deptTransfer ? formData.department :formData.assignedTo}
+                  onChange={(e) => deptTransfer ? setFormData({ ...formData, department: e.target.value }) : setFormData({ ...formData, assignedTo: e.target.value })}
                   className="w-full pl-11 pr-10 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:border-[#0088A8] text-sm font-bold text-slate-700 appearance-none cursor-pointer"
                 >
-                  <option value="">Select Faculty Member</option>
-                  {facultyList?.map((f) => (
+                  <option value=""> {deptTransfer ? "Select Department" : "Select Faculty Member"}</option>
+                  {deptTransfer && departmentsList.map(dep =>
+                    <option key={dep._id} value={dep._id}>{dep.name}</option>
+                  )}
+                  {!deptTransfer && facultyList?.map((f) => (
                     <option key={f._id} value={f._id}>{f.name} ({f.department})</option>
                   ))}
                 </select>

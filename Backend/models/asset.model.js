@@ -23,7 +23,6 @@ const assetSchema = new mongoose.Schema({
     department: {
            type: mongoose.Schema.Types.ObjectId,
            ref: "departmentModel",
-           required: true
        },
     condition: {
         type: String,
@@ -31,10 +30,15 @@ const assetSchema = new mongoose.Schema({
         required: true,
         default: "New"
     },
-    status: {
+    collegeStatus: {
         type: String,
         enum: ["Available", "Assigned", "Pending"],
-        default: "Available"
+        default: "Available"  // Principal ke liye status
+    },
+    deptStatus: {
+        type: String,
+        enum: ["Available", "Assigned", "Pending"],
+        default: "Available"  // HOD/faculty ke liye status
     },
     history: [historySchema]
 },{timestamps:true})

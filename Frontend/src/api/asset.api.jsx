@@ -45,9 +45,11 @@ export const useAddAsset = () => {
             setLoading(true);
             setError(null);
             const response = await baseApi.post(assetEndPoints.asset, formData);
+            console.log("res create asset", response,response.data.asset);
+            
             if (response?.data) {
-                const newAsset = response.data.newAsset;
-                const updatedAssetsList = [...assetsList, newAsset];
+                const asset = response.data.asset;
+                const updatedAssetsList = [...assetsList, asset];
                 dispatch(setAssetsList(updatedAssetsList));
                 toast.success("Asset added successfully");
                 return response.data;

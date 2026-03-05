@@ -8,6 +8,7 @@ import HODRequest from "./pages/HOD/HODRequest";
 import HODManageAssets from "./pages/HOD/HODManageAssets";
 import HODReport from "./pages/HOD/HODReport";
 import { ProtectRoute } from "./components/ProtectRoute";
+import PrincipalClgAssets from "./pages/principal/PrincipalClgAssets";
 
 
   const router = createBrowserRouter([
@@ -21,7 +22,7 @@ import { ProtectRoute } from "./components/ProtectRoute";
         },
         {
           path:"/principal/college-assets",
-          element: <ProtectRoute><h1>College Assets Page</h1></ProtectRoute>
+          element: <ProtectRoute><PrincipalClgAssets/></ProtectRoute>
         },
         {
           path:"/principal/departments",

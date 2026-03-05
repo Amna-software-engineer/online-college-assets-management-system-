@@ -9,24 +9,24 @@ const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || "some_random_secret_k
 export const createAsset = async (req, res) => {
     let { name, category, price, quantity, assignedTo, department, condition } = req.body;
     console.log(req.body);
-    
+
     try {
-        if (!name || !category || !price || !quantity || !department || !condition) {
+        if (!name || !category || !price || !quantity || !condition) {
             return res.status(400).json({ success: false, message: "All fields are required!" });
         }
-      
-        
+
+
         // 1. Check if same asset exists in Main Store (assignedTo: null)
         let existingAsset = await assetModel.findOne({
             name,
             condition,
             department,
-            assignedTo: null 
+            assignedTo: null
         });
 
         if (existingAsset) {
             existingAsset.quantity += Number(quantity);
-            
+
             existingAsset.history.push({
                 action: "Stock Updated",
                 quantity: Number(quantity),
@@ -48,24 +48,25 @@ export const createAsset = async (req, res) => {
             category,
             price,
             quantity: Number(quantity),
-            assignedTo: assignedTo || null, 
-            department,
+            assignedTo: assignedTo || null,
+            department: department || null,
             condition,
-            status: assignedTo ? "Assigned" : "Available", 
+            collegeStatus: department && !assignedTo ? "Assigned" : "Available", // if assigned to dept
+            deptStatus: assignedTo ? "Assigned" : "Available", // if assigned to faculty
             history: [{
                 action: "Initial Purchase",
                 quantity: Number(quantity),
-                note: assignedTo 
-                    ? `Asset created and directly assigned.` 
+                note: assignedTo
+                    ? `Asset created and directly assigned.`
                     : `Initial stock added to Main Store by Principal.`,
                 date: new Date()
             }]
         });
 
-        return res.status(201).json({ 
-            success: true, 
-            message: "Asset created successfully!", 
-            asset: newAsset 
+        return res.status(201).json({
+            success: true,
+            message: "Asset created successfully!",
+            asset: newAsset
         });
 
     } catch (error) {
@@ -74,16 +75,16 @@ export const createAsset = async (req, res) => {
 };
 // transfer asset from one faculty to another or from store to faculty
 export const updateAsset = async (req, res) => {
-    const { assetId, quantity, assignedTo, condition } = req.body;
+    const { assetId, quantity, assignedTo, condition, department } = req.body;
 
     // 1. Validation
-    if (!assetId || !quantity || !assignedTo || !condition) {
+    if (!assetId || !quantity || !condition) {
         return res.status(400).json({ success: false, message: "All fields are required!" });
     }
 
     try {
         const originalAsset = await assetModel.findById(assetId).populate('assignedTo');
-        
+
         if (!originalAsset) {
             return res.status(404).json({ success: false, message: "Asset not found!" });
         }
@@ -105,29 +106,38 @@ export const updateAsset = async (req, res) => {
         await originalAsset.save();
 
         // 4. Create/Update Transferred Asset (The Destination)
-        const transferredAsset = await assetModel.create({
+        // destination asset
+        const newAssetData = {
             name: originalAsset.name,
             category: originalAsset.category,
             price: originalAsset.price,
-            quantity: quantity,
-            assignedTo: assignedTo, // ID of the faculty receiving it
-            department: originalAsset.department,
-            condition: condition,
-            status: "Assigned",
-            //  "Transfer In" in new asset record karenge
+            quantity,
+            condition,
             history: [{
                 action: "Transfer In",
-                quantity: quantity,
-                note: `Received from ${originalAsset.assignedTo?.name || "Main Store"}`,
+                quantity,
+                note: "Asset received",
                 date: new Date()
             }]
-        });
+        };
+        if (assignedTo) {
+            newAssetData.assignedTo = assignedTo;
+            newAssetData.department = originalAsset.department;
+              newAssetData.deptStatus = "Assigned"; //faculty assignment
+        }
 
-        return res.status(201).json({ 
-            success: true, 
-            message: "Asset Transferred Successfully!", 
-            transferredAsset, 
-            originalAsset 
+        if (department) {
+            newAssetData.department = department;
+             newAssetData.collegeStatus = "Assigned"; //department assignment
+        }
+
+        const transferredAsset = await assetModel.create(newAssetData);
+
+
+        return res.status(201).json({
+            success: true,
+            message: "Asset Transferred Successfully!",
+            transferredAsset,
         });
 
     } catch (error) {
@@ -151,7 +161,7 @@ export const getAssets = async (req, res) => {
             assetList = assetList.filter(asset => asset.quantity > 0); // HOD ko apne assigned assets nahi dikhane
             console.log("assetList hod", assetList);
         } else if (decoded.role === "Principal") {
-            assetList = await assetModel.find().populate("assignedTo", "name email");
+            assetList = await assetModel.find().populate("assignedTo", "name email").populate("department");
             console.log("assetList principal", assetList);
         }
         console.log("assetList", assetList);
