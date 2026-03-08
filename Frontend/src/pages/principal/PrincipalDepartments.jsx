@@ -9,12 +9,14 @@ import TransferAssetModal from '../../components/HOD/TransferAssetModal';
 import ViewDetailsModal from '../../components/HOD/ViewDetailsModal';
 import AddDepartmentModal from '../../components/principal/AddDepartmentModal';
 import AddHodModel from '../../components/principal/AddHodModel';
+import { useRequestAudit } from '../../api/department.api';
+import { toast } from 'react-toastify';
 
 const PrincipalDepartments = () => {
-    const [searchTerm, setSearchTerm] = useState("");
-    const { assetsList } = useSelector(state => state?.assets);
     const { deptList: departmentsList } = useSelector(state => state?.departments);
     const { facultyList } = useSelector(state => state?.faculty);
+    const [searchTerm, setSearchTerm] = useState("");
+    const { assetsList } = useSelector(state => state?.assets);
     const [selectedCategory, setSelectedCategory] = useState("All");
     const [seletectedHOD, setseletectedHOD] = useState(false);
     const [showAddHod, setShowAddHod] = useState(false);
@@ -24,6 +26,7 @@ const PrincipalDepartments = () => {
     const [selectedAsset, setSelectedAsset] = useState(null);
     const [isOpen, setIsOpen] = useState(false)
     const [isChangeHOD, setIsChangeHOD] = useState(false)
+    const {requestAudit}=useRequestAudit();
 
     const filteredAssets = assetsList?.filter(a => {
         const matchesSearch = a?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -34,12 +37,6 @@ const PrincipalDepartments = () => {
 
         return matchesSearch && matchesCategory && matchesDept;
     });
-
-const currentDeptHOD = facultyList?.filter(f => 
-    f.department === selectedDepartment && 
-    f.role === "HOD" && 
-    f.status === "Active"
-) || [];
     // Stats Calculation (Global level)
     const totalAssets = filteredAssets?.reduce((t, a) => t + (a.quantity || 0), 0) || 0;
     const workingAssets = filteredAssets?.filter(a => a.condition === "New").length || 0;
@@ -73,7 +70,22 @@ const currentDeptHOD = facultyList?.filter(f =>
             , 0) || 0;
 
     const availableUnits = totalUnits - assignedUnits;
+    const currentDeptData = departmentsList?.find(d => d._id === selectedDepartment);
 
+    const currentDeptHOD = facultyList?.filter(f =>
+        f.department === selectedDepartment &&
+        f.role === "HOD" &&
+        f.status === "Active"
+    ) || [];
+    // Request Audit Handler
+    const handleRequestAudit = async (deptId) => {
+        if (!deptId || deptId === "All") {
+            toast.error("Please select a specific department first");
+            return;
+        }
+       await requestAudit(deptId);
+
+    }
     return (
         <div className="max-w-5xl mx-auto space-y-8 mb-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* 1. ACTIONS & STATS ROW */}
@@ -107,14 +119,8 @@ const currentDeptHOD = facultyList?.filter(f =>
                         <select
                             value={selectedDepartment}
                             onChange={(e) => {
-                                const deptId = e.target.value; // id store kar lo
-                                setSelectedDepartment(deptId);
-
-                                // filter by id
-                                // const filteredHODs = facultyList.filter(f => f.department === deptId && f.status === "Active");
-                                // setseletectedHOD(filteredHODs);
-                            }}
-                            className="bg-white border-2 border-slate-100 rounded-2xl px-4 py-3 text-[10px] font-black uppercase text-slate-700 outline-none focus:border-cyan-500 transition-all"
+                                setSelectedDepartment(e.target.value);
+                            }} className="bg-white border-2 border-slate-100 rounded-2xl px-4 py-3 text-[10px] font-black uppercase text-slate-700 outline-none focus:border-cyan-500 transition-all"
                         >
                             <option value="All">All College</option>
                             {departmentsList?.map(d =>
@@ -131,7 +137,7 @@ const currentDeptHOD = facultyList?.filter(f =>
                             />
                         </div>
                         <button className="px-4 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-xl transition cursor-pointer" onClick={() => { setIsOpen(true); }}>Add Department</button>
-                        <button className="px-4 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-xl transition cursor-pointer" onClick={() => { setShowAddHod(true);setIsChangeHOD(false) }}>Assin HOD</button>
+                        <button className="px-4 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-xl transition cursor-pointer" onClick={() => { setShowAddHod(true); setIsChangeHOD(false) }}>Assin HOD</button>
                     </div>
                 </div>
             </div>
@@ -165,13 +171,13 @@ const currentDeptHOD = facultyList?.filter(f =>
                             </div>
                         </div>
                     </div>
-                    <button onClick={()=> {setIsChangeHOD(true); setShowAddHod(true);}} className="bg-slate-800 hover:bg-cyan-600 px-5 py-2.5 rounded-xl text-[9px] font-black uppercase border border-slate-700 transition-all active:scale-95 cursor-pointer">
+                    <button onClick={() => { setIsChangeHOD(true); setShowAddHod(true); }} className="bg-slate-800 hover:bg-cyan-600 px-5 py-2.5 rounded-xl text-[9px] font-black uppercase border border-slate-700 transition-all active:scale-95 cursor-pointer">
                         Change HOD
                     </button>
                 </div>
                 {/* AUDIT STATUS */}
                 <div className="bg-white border border-slate-100 rounded-[2.5rem] p-6 flex items-center justify-between shadow-sm group">
-                    <div className="flex items-center gap-4">
+                    {/* <div className="flex items-center gap-4">
                         <div className="p-4 bg-cyan-50 text-[#008BA9] rounded-2xl group-hover:bg-[#008BA9] group-hover:text-white transition-all duration-500">
                             <ShieldCheck size={26} />
                         </div>
@@ -184,6 +190,29 @@ const currentDeptHOD = facultyList?.filter(f =>
                     </div>
                     <button className="bg-cyan-600 hover:bg-[#007894] text-white px-6 py-3 rounded-xl text-[9px] font-black uppercase shadow-lg shadow-cyan-100 transition-all active:scale-95 cursor-pointer">
                         Request Audit
+                    </button> */}
+                    <div className="flex items-center gap-4">
+                        <div className="p-4 bg-cyan-50 text-[#008BA9] rounded-2xl group-hover:bg-[#008BA9] group-hover:text-white transition-all duration-500">
+                            <ShieldCheck size={26} />
+                        </div>
+                        <div>
+                            <h4 className="font-black text-slate-800 uppercase italic text-xs tracking-tighter">Inventory Audit</h4>
+                            <p className="text-[10px] text-slate-400 font-bold mt-1 uppercase tracking-tighter">
+                                Last Verified: <span className="text-emerald-500 font-black">
+                                    {currentDeptData?.lastAuditDate
+                                        ? new Date(currentDeptData.lastAuditDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+                                        : "Never Verified"}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <button
+                        onClick={() => handleRequestAudit(selectedDepartment)}
+                        disabled={currentDeptData?.auditStatus === 'Requested'}
+                        className="bg-cyan-600 hover:bg-[#007894] disabled:bg-slate-300 text-white px-6 py-3 rounded-xl text-[9px] font-black uppercase shadow-lg transition-all active:scale-95 cursor-pointer"
+                    >
+                        {currentDeptData?.auditStatus === 'Requested' ? "Audit Pending" : "Request Audit"}
                     </button>
                 </div>
 

@@ -1,5 +1,6 @@
 import DepartmentModel from "../models/department.model.js"
 import UserModel from "../models/user.model.js"
+import AssetModel from "../models/asset.model.js"
 
 export const getDept = async (req, res) => {
     console.log("get dept");
@@ -82,4 +83,62 @@ export const updateDept = async (req, res) => {
         });
     }
 };
+// will change audit status to requested
+export const requestAudit = async (req, res) => {
+    try {
+        const { deptId } = req.params;
 
+        const department = await DepartmentModel.findById(deptId);
+        if (!department) {
+            return res.status(404).json({ message: "Department not found" });
+        }
+
+        // Status update 
+        department.auditStatus = 'Requested';
+        // Optional: Don't Touch  lastAuditDate, it will update when HOD verify
+
+        await department.save();
+
+        res.status(200).json({
+            message: "Audit requested successfully",
+            department
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Error requesting audit",
+            error: error.message
+        });
+    }
+};
+
+// Backend Controller for HOD: verifyAudit
+export const verifyAudit = async (req, res) => {
+    try {
+        const { deptId } = req.params;
+        const {totalItems}=req.body
+        const department = await DepartmentModel.findById(deptId);
+
+        
+        // Optional: Get current item count for the report
+        // const itemCount = await AssetModel.countDocuments({ department: deptId });
+
+        department.auditStatus = 'Verified';
+        department.lastAuditDate = Date.now();
+        
+        // Push to History
+        department.auditHistory.push({ 
+            date: Date.now(), 
+            verifiedBy: req.user.name, 
+            remarks: "Physical stock verified by HOD",
+            totalItems: totalItems 
+        });
+
+        await department.save();
+        console.log(department);
+        
+        res.status(200).json({ message: "Audit verified successfully", department });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};

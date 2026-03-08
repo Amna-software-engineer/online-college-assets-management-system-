@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Package, DollarSign, Settings, ClipboardList, Users, PlusCircle, AlertTriangle, UserPlus, ArrowUpRight } from 'lucide-react';
+import { Package, DollarSign, Settings, ClipboardList, Users, PlusCircle, AlertTriangle, UserPlus, ArrowUpRight, ShieldAlert, ShieldCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { Chart as ChartJS, defaults } from "chart.js/auto";
@@ -7,18 +7,22 @@ import { Doughnut } from "react-chartjs-2";
 import { formatDistanceToNow } from "date-fns";
 import StatsCards from '../../components/StatsCards';
 import DataTable from '../../components/DataTable';
+import {useGetAllDept, useVerifyAudit} from '../../api/department.api';
 
 
 const HODDashboard = () => {
     const { assetsList } = useSelector(state => state?.assets);
     const { requestList } = useSelector(state => state?.requests);
     const { facultyList } = useSelector(state => state?.faculty);
+    const { deptList: departmentsList } = useSelector(state => state?.departments);
+    const { currUser:user } = useSelector(state => state?.auth);
     const totalAssetsValue = assetsList && assetsList?.reduce((total, asset) => total + asset?.price * asset?.quantity, 0) || 0;
     const totalLength = assetsList?.length;
     const funtionalAsset = assetsList?.filter(asset => asset?.condition === "New").length; console.log("funtionalAsset", funtionalAsset);
-
+   const [showAuditModal,setShowAuditModal]= useState(false);
     const MaintenanceHealth = totalLength > 0 ? (funtionalAsset / totalLength) * 100 : 0; //formula= (functional assets /total assets)*100
-
+     const {loading:auditLoading,verifyAudit}=useVerifyAudit();   
+     const {getDepts}=useGetAllDept();   
     // chart data
     const category = [
         { label: 'IT & Electronics', val: assetsList?.filter(asset => asset?.category === "IT & Electronics").length, color: '#06b6d4' }, // bg-cyan-500
@@ -62,11 +66,101 @@ const HODDashboard = () => {
 
     ].sort((a, b) => new Date(b.time) - new Date(a.time)).slice(0, 5); // Sort by most recent and limit to 5 items
 
+    const currentDeptData = departmentsList?.find(d => d?._id === user?.department?._id);
+    // handler to confirm audit
+    const handleConfirmAudit = async () => {
+        try {
+            // Assume you have a hook called useVerifyAudit
+            await verifyAudit(currentDeptData._id,totalUnits);
+            setShowAuditModal(false);
+            // Refresh department data to hide the alert
+            await getDepts();
+        } catch (err) {
+            console.error("Audit verification failed", err);
+        }
+    };
     return (
         <div className="space-y-10 animate-in fade-in duration-500">
 
             {/* 1. Top Stats Cards */}
             <StatsCards stats={stats} />
+            {/* --- AUDIT ALERT SECTION --- */}
+            {currentDeptData?.auditStatus === 'Requested' && (
+                <div className="bg-amber-50 border-l-4 border-amber-500 p-6 rounded-r-[2rem] flex justify-between items-center shadow-sm animate-pulse">
+                    <div className="flex items-center gap-4">
+                        <div className="bg-amber-100 p-3 rounded-2xl text-amber-600">
+                            <ShieldAlert size={24} />
+                        </div>
+                        <div>
+                            <h3 className="text-amber-800 font-black text-sm uppercase italic tracking-tight">Audit Requested by Principal</h3>
+                            <p className="text-amber-700/70 text-[10px] font-bold uppercase">Please verify the physical stock and confirm the audit for this month.</p>
+                        </div>
+                    </div>
+                    <button
+                        onClick={() => setShowAuditModal(true)}
+                        className="bg-amber-500 text-white px-6 py-3 rounded-xl text-[10px] font-black uppercase hover:bg-amber-600 transition-all shadow-md active:scale-95"
+                    >
+                        Verify Now
+                    </button>
+                </div>
+            )}
+            {/* AUDIT VERIFICATION MODAL */}
+            {showAuditModal && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-300">
+                    <div className="bg-white w-full max-w-md rounded-[3rem] shadow-2xl border border-slate-100 overflow-hidden transition-all transform scale-100">
+
+                        {/* Header with Icon */}
+                        <div className="bg-amber-50 p-8 flex flex-col items-center text-center">
+                            <div className="bg-white p-4 rounded-3xl shadow-sm text-amber-500 mb-4">
+                                <ShieldCheck size={40} />
+                            </div>
+                            <h2 className="text-xl font-black text-slate-800 uppercase italic tracking-tighter">
+                                Confirm Inventory Audit
+                            </h2>
+                            <p className="text-[10px] font-bold text-amber-700/60 mt-1 uppercase tracking-widest">
+                                Official Verification Process
+                            </p>
+                        </div>
+
+                        {/* Body */}
+                        <div className="p-8 space-y-6">
+                            <p className="text-sm text-slate-500 font-medium leading-relaxed text-center">
+                                I, <span className="text-slate-800 font-black italic">Prof. {user?.name}</span>, hereby confirm that I have physically inspected all assets assigned to the <span className="text-cyan-600 font-black underline decoration-cyan-200 underline-offset-4">{currentDeptData?.name}</span> department.
+                            </p>
+
+                            <div className="bg-slate-50 p-4 rounded-2xl border border-dashed border-slate-200">
+                                <ul className="space-y-2">
+                                    <li className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                                        All assets are physically present
+                                    </li>
+                                    <li className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                                        Current status is accurately logged
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        {/* Footer Actions */}
+                        <div className="p-8 pt-0 flex gap-3">
+                            <button
+                                onClick={() => setShowAuditModal(false)}
+                                className="flex-1 px-6 py-4 rounded-2xl text-[10px] font-black text-slate-400 uppercase hover:bg-slate-50 transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleConfirmAudit} // Call your hook here
+                                disabled={auditLoading}
+                                className="flex-[2] bg-slate-900 text-white px-6 py-4 rounded-2xl text-[10px] font-black uppercase shadow-xl shadow-slate-200 hover:bg-slate-800 transition-all active:scale-95 disabled:bg-slate-300"
+                            >
+                                {auditLoading ? "Verifying..." : "Confirm & Sign Audit"}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
             {/* Category and Quick actions */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 

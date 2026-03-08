@@ -15,4 +15,7 @@ export const requestEndPoints = {
 export const deptEndPoints = {
     department: "/department",
     updateDept: (id) => `/department/${id}`,
+    requestAudit: (deptId) => `/department/request-audit/${deptId}`,
+    verifyAudit:(deptId)=>`/department/verify-audit/${deptId}`,
+
 }

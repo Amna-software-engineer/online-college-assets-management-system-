@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { setDeptList } from "../features/department.slice";
 import { useDispatch } from "react-redux";
-import { deptEndPoints } from "./endpoints";
+import { deptEndPoints  } from "./endpoints";
 import { toast } from "react-toastify";
 import { baseApi } from "./base.api";
 import { useGetAllFaculty } from "./asset.api";
@@ -95,3 +95,59 @@ export const useUpdateDept = () => {
     }
     return { loading, error, updateDept }
 }
+
+// 
+export const useRequestAudit = () => {
+    const [loading, setLoading] = useState(false);
+    const { getDepts } = useGetAllDept();
+
+    const requestAudit = async (deptId) => {
+
+        setLoading(true);
+        try {
+            // Backend endpoint: /api/department/request-audit/:deptId
+            const response = await baseApi.patch(deptEndPoints.requestAudit(deptId));
+            
+            if (response.data) {
+                // Store refresh so on "Audit Pending" Show
+                await getDepts(); 
+                toast.success("Audit request sent to HOD");
+                return response.data;
+            }
+        } catch (err) {
+            const message = err?.response?.data?.message || "Failed to request audit";
+            toast.error(message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return { loading, requestAudit };
+};
+export const useVerifyAudit = () => {
+    const [loading, setLoading] = useState(false);
+
+    const verifyAudit = async (deptId,totalItems) => {
+        if (!deptId) {
+            toast.error("Department ID is missing");
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const response = await baseApi.patch(deptEndPoints.verifyAudit(deptId),{totalItems});
+            
+            if (response.data) {
+                toast.success("Audit verification completed successfully");
+                return response.data;
+            }
+        } catch (err) {
+            const message = err?.response?.data?.message || "Failed to verify audit";
+            toast.error(message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return { loading, verifyAudit };
+};
