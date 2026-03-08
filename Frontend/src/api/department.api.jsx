@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { deptEndPoints } from "./endpoints";
 import { toast } from "react-toastify";
 import { baseApi } from "./base.api";
+import { useGetAllFaculty } from "./asset.api";
 
 // custome hook to get all dept from backend
 export const useGetAllDept = () => {
@@ -66,6 +67,7 @@ export const useUpdateDept = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const { getDepts } = useGetAllDept();
+    const { getFaculty } = useGetAllFaculty();
     const dispatch = useDispatch();
     // function to update dept
     const updateDept = async (deptId, hodId) => {
@@ -73,10 +75,13 @@ export const useUpdateDept = () => {
         setError(null);
         try {
             console.log(deptId, hodId);
-            
-            const response = await baseApi.patch(deptEndPoints.updateDept(deptId), {hodId});
+
+            const response = await baseApi.patch(deptEndPoints.updateDept(deptId), { hodId });
             if (response.data) {
-                await getDepts();
+              await  Promise.all([
+                     getDepts(),  getFaculty()
+                ])
+
                 toast.success("Departments Updated successfully");
                 return response.data;
             }

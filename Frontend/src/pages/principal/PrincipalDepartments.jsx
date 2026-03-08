@@ -35,7 +35,11 @@ const PrincipalDepartments = () => {
         return matchesSearch && matchesCategory && matchesDept;
     });
 
-    console.log("selectedDepartment", seletectedHOD, facultyList);
+const currentDeptHOD = facultyList?.filter(f => 
+    f.department === selectedDepartment && 
+    f.role === "HOD" && 
+    f.status === "Active"
+) || [];
     // Stats Calculation (Global level)
     const totalAssets = filteredAssets?.reduce((t, a) => t + (a.quantity || 0), 0) || 0;
     const workingAssets = filteredAssets?.filter(a => a.condition === "New").length || 0;
@@ -107,8 +111,8 @@ const PrincipalDepartments = () => {
                                 setSelectedDepartment(deptId);
 
                                 // filter by id
-                                const filteredHODs = facultyList.filter(f => f.department === deptId && f.status === "Active");
-                                setseletectedHOD(filteredHODs);
+                                // const filteredHODs = facultyList.filter(f => f.department === deptId && f.status === "Active");
+                                // setseletectedHOD(filteredHODs);
                             }}
                             className="bg-white border-2 border-slate-100 rounded-2xl px-4 py-3 text-[10px] font-black uppercase text-slate-700 outline-none focus:border-cyan-500 transition-all"
                         >
@@ -127,7 +131,7 @@ const PrincipalDepartments = () => {
                             />
                         </div>
                         <button className="px-4 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-xl transition cursor-pointer" onClick={() => { setIsOpen(true); }}>Add Department</button>
-                        <button className="px-4 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-xl transition cursor-pointer" onClick={() => { setShowAddHod(true); }}>Assin HOD</button>
+                        <button className="px-4 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-xl transition cursor-pointer" onClick={() => { setShowAddHod(true);setIsChangeHOD(false) }}>Assin HOD</button>
                     </div>
                 </div>
             </div>
@@ -145,8 +149,8 @@ const PrincipalDepartments = () => {
 
                             {/* Name */}
                             <h4 className="text-lg font-black italic tracking-tight">
-                                {seletectedHOD.length > 0
-                                    ? `Prof. ${seletectedHOD[0].name}`
+                                {currentDeptHOD.length > 0
+                                    ? `Prof. ${currentDeptHOD[0].name}`
                                     : "No HOD Assigned"}
                             </h4>
 
@@ -154,14 +158,14 @@ const PrincipalDepartments = () => {
                             <div className="flex items-center gap-2 text-[10px] text-slate-400 mt-1 font-medium">
                                 <Mail size={12} className="text-slate-500" />
                                 <span>
-                                    {seletectedHOD.length > 0
-                                        ? seletectedHOD[0].email
+                                    {currentDeptHOD.length > 0
+                                        ? currentDeptHOD[0].email
                                         : "—"}
                                 </span>
                             </div>
                         </div>
                     </div>
-                    <button onClick={()=> {setIsChangeHOD(true); setShowAddHod(true)}} className="bg-slate-800 hover:bg-cyan-600 px-5 py-2.5 rounded-xl text-[9px] font-black uppercase border border-slate-700 transition-all active:scale-95 cursor-pointer">
+                    <button onClick={()=> {setIsChangeHOD(true); setShowAddHod(true);}} className="bg-slate-800 hover:bg-cyan-600 px-5 py-2.5 rounded-xl text-[9px] font-black uppercase border border-slate-700 transition-all active:scale-95 cursor-pointer">
                         Change HOD
                     </button>
                 </div>
@@ -314,7 +318,7 @@ const PrincipalDepartments = () => {
                 </div>
             </ViewDetailsModal>
             <AddDepartmentModal isOpen={isOpen} onClose={() => setIsOpen(false)} setShowAddHod={setShowAddHod} setNewDeptId={setNewDeptId} />
-            <AddHodModel isOpen={showAddHod} onClose={() => setShowAddHod(false)} deptId={newDeptId} changeHod={isChangeHOD} seletectedHod={seletectedHOD} />
+            <AddHodModel isOpen={showAddHod} onClose={() => setShowAddHod(false)} deptId={newDeptId} changeHod={isChangeHOD} seletectedHod={currentDeptHOD} />
         </div>
     );
 };
