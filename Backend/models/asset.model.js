@@ -22,7 +22,7 @@ const assetSchema = new mongoose.Schema({
     assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: "userModel" },
     department: {
            type: mongoose.Schema.Types.ObjectId,
-           ref: "departmentModel",
+           ref: "DepartmentModel",
        },
     condition: {
         type: String,

@@ -21,7 +21,7 @@ export const useGetAllAsset = () => {
             if (response) {
                 const assetsList = response.data.assetList;
                 dispatch(setAssetsList(assetsList));
-                toast.success("Assets fetched successfully");
+                // toast.success("Assets fetched successfully");
                 return assetsList;
             }
         } catch (err) {
@@ -117,7 +117,7 @@ export const useGetAllFaculty = () => {
             if (response) {
                 const facultyList = response.data.facultyList;
                 dispatch(setFacultyList(facultyList));
-                toast.success("Faculty fetched successfully");
+                // toast.success("Faculty fetched successfully");
                 return facultyList;
             }
         } catch (err) {

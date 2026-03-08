@@ -29,7 +29,7 @@ const LoginForm = () => {
                 navigate("/principal/dashboard");
                   await Promise.all([ getAssets(),  getRequests(),  getFaculty(), getDepts()])
             } else if (response?.user?.role === "HOD") {
-                navigate("/hod/dashboard");
+                   response?.user?.status ==="Blocked" ? navigate("/hod-info"):  navigate("/hod/dashboard");
                await Promise.all([ getAssets(),  getRequests(),  getFaculty()])
                 
             }else{

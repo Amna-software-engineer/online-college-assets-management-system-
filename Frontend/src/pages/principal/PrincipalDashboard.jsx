@@ -13,7 +13,7 @@ const PrincipalDashboard = () => {
   const { requestList } = useSelector(state => state?.requests);
   const { facultyList } = useSelector(state => state?.faculty);
   const { deptList } = useSelector(state => state?.departments);
-  
+
   const totalAssetsValue = assetsList && assetsList?.reduce((total, asset) => total + asset?.price * asset?.quantity, 0) || 0;
   const totalLength = assetsList?.length;
   const funtionalAsset = assetsList?.filter(asset => asset?.condition === "New").length; console.log("funtionalAsset", funtionalAsset);
@@ -35,7 +35,7 @@ const PrincipalDashboard = () => {
     },
     { label: 'Maintenance', value: Math.round(MaintenanceHealth) + '%', icon: <Settings className="text-orange-600" />, bg: 'bg-orange-50' },
     { label: 'Pending Requests', value: requestList?.length || 0, icon: <ClipboardList className="text-red-600" />, bg: 'bg-red-50' },
-    { label: 'Total Faculty', value: facultyList?.length || 0, icon: <Users className="text-indigo-600" />, bg: 'bg-indigo-50' },
+    { label: 'Total Faculty', value: facultyList?.filter(f => f.role === "Faculty").length || 0, icon: <Users className="text-indigo-600" />, bg: 'bg-indigo-50' },
   ];
 
   // chart data
@@ -44,7 +44,7 @@ const PrincipalDashboard = () => {
       label: dept?.name,
       val: assetsList?.reduce((total, currAsset) => {
         console.log(dept?._id === currAsset?.department?._id);
-        
+
         if (dept?._id === currAsset?.department?._id) {
           total = total + currAsset.quantity;
           return total
@@ -54,8 +54,8 @@ const PrincipalDashboard = () => {
       color: colors[i % colors.length]
     }
   ))
-  console.log("deptAssets",deptAssets);
-  
+  console.log("deptAssets", deptAssets);
+
   const activityLog = [
     ...requestList
       ?.filter(req => ["New Asset", "Maintenance"].includes(req.requestType))

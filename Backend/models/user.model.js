@@ -7,9 +7,12 @@ const userSchema = new mongoose.Schema({
     role: { type: String, enum: ["Principal", "HOD", "Faculty"], required: true },
     department: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "departmentModel",
+        ref: "DepartmentModel",
         required: true
     },
+    status: {
+        type: String, required: true,enum:["Active","Blocked"]
+    }
 }, { timestamps: true })
 
 const model = mongoose.model("userModel", userSchema);

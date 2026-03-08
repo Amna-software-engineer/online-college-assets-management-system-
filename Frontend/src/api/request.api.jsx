@@ -19,7 +19,7 @@ export const useGetAllRequest = () => {
             if (response) {
                 const requestList = response.data.requestList;
                dispatch(setRequestList(requestList));
-               toast.success("Requests fetched successfully");
+            //    toast.success("Requests fetched successfully");
                 return requestList;
             }
         } catch (err) {

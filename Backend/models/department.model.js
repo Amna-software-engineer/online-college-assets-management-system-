@@ -4,7 +4,7 @@ const deptSchema = new mongoose.Schema({
     name: { 
         type: String,
         required: true, 
-        enum: ["CS","Botany","Physics","Maths","Chemistry"] 
+        enum: ["CS","Botany","Physics","Maths","Chemistry","Political Science","Islamyat","Electronics"] 
     },
     hod: { 
         type: mongoose.Schema.Types.ObjectId, 
@@ -12,6 +12,6 @@ const deptSchema = new mongoose.Schema({
         }
 }, { timestamps: true })
 
-const model = mongoose.model("departmentModel", deptSchema);
+const model = mongoose.model("DepartmentModel", deptSchema);
 export default model;
 

@@ -1,9 +1,11 @@
 import Router from "express";
-import { createDept, getDept } from "../controller/department.controller.js";
+import { createDept, getDept, updateDept } from "../controller/department.controller.js";
+import { verifyToken } from "../middleware/auth.middleware.js";
 
 const router = Router();
 
-router.post("/department", createDept);
+router.post("/department",verifyToken, createDept);
+router.patch("/department/:id", verifyToken ,updateDept);
 router.get("/department", getDept);
 
 

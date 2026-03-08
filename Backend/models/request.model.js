@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import userModel from './user.model.js'
-import departmentModel from "./department.model.js"
+import DepartmentModell from "./department.model.js"
 
 const requestSchema = new mongoose.Schema({
     requestType: {
@@ -17,7 +17,7 @@ const requestSchema = new mongoose.Schema({
     assetId: { type: mongoose.Schema.Types.ObjectId, ref: "assetModel" },
     department: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "departmentModel",
+        ref: "DepartmentModel",
         required: true
     },
     status: {

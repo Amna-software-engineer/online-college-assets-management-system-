@@ -20,13 +20,11 @@ app.use(cors({
 app.use(express.json());   // Middleware to parse JSON bodies
 
 
-app.get("/", (req, res) => {
-    res.send("Hello World")
-});
+
+app.use("/api", deptRouter);
 app.use("/api", authRouter);
 app.use("/api", verifyToken, assetRouter);
 app.use("/api", verifyToken, requestRouter);
-app.use("/api", verifyToken, deptRouter);
 
 mongoose.connect(mongoDbURL,)
     .then(() => {

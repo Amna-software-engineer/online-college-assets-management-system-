@@ -1,10 +1,15 @@
 import { Building2, CheckCircle2, ChevronDown, Lock, Mail, ShieldCheck, User } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useRegister } from "../api/auth.api";
 import Loader from "../components/Loader";
+import { useSelector } from "react-redux";
+import { useGetAllDept } from "../api/department.api";
+import HodInfoPage from "./HOD/HodInfo";
 
 const RegisterPage = () => {
+  const { deptList: departmentsList } = useSelector(state => state?.departments);
+  const { getDepts } = useGetAllDept();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -12,12 +17,24 @@ const RegisterPage = () => {
     role: "",
     department: ""
   });
+  useEffect(() => {
+    (async () => {
+      await getDepts();
+    })()
+  }, [])
+
   const { register, loading } = useRegister();
   const navigate = useNavigate();
   const HandleSubmit = async (formData) => {
+    if (formData.department === "All") {
+      toast.error("Please select a department");
+      return;
+    }
     const response = await register(formData);
+    console.log(response);
     if (response?.success) {
-      navigate("/login")
+      
+    response.user.status ==="Blocked" ? navigate("/hod-info"): navigate("/login")
     }
     console.log(formData);
 
@@ -85,16 +102,14 @@ const RegisterPage = () => {
                 id="department"
                 name="department"
                 value={formData.department}
+                required
                 onChange={(e) => (setFormData({ ...formData, department: e.target.value }))}
                 className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:border-[#0088A8] text-sm font-bold text-slate-700 appearance-none cursor-pointer"
               >
-                {/* enum: ["CS", "Maths", "Physics"] */}
-                <option value="CS">Computer Science</option>
-                <option value="Physics">Physics Department</option>
-                <option value="Botany">Botany Department</option>
-                <option value="Maths">Maths Department</option>
+                <option value={"All"}>Choose Department</option>
+                {departmentsList?.map(d =>
+                  <option key={d._id} value={d._id}>{d.name}</option>)}
               </select>
-              {/* Dropdown arrow icon (Optional but recommended for appearance-none) */}
               <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300">
                 <ChevronDown size={14} />
               </div>

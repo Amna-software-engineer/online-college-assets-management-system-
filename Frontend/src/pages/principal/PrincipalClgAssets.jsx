@@ -25,13 +25,13 @@ const PrincipalClgAssets = () => {
       ? (selectedAsset?.name === curr?.name ? total + curr.quantity : total)
       : total + curr.quantity
     , 0) || 0;
-  const assignedUnits = assetsList?.filter(a => a?.assignedTo ||  a?.department)
-  .reduce((total, curr) => 
-    selectedAsset
-      ? (selectedAsset?.name === curr?.name ? total + curr.quantity : total)
-      : total + curr.quantity
-    , 0) || 0; 
-    
+  const assignedUnits = assetsList?.filter(a => a?.assignedTo || a?.department)
+    .reduce((total, curr) =>
+      selectedAsset
+        ? (selectedAsset?.name === curr?.name ? total + curr.quantity : total)
+        : total + curr.quantity
+      , 0) || 0;
+
   const availableUnits = totalUnits - assignedUnits;
 
   const stats = [
@@ -129,10 +129,8 @@ const PrincipalClgAssets = () => {
                 <p className="text-[9px] text-slate-400 uppercase tracking-widest">ID: {asset?._id.slice(-6)}#</p>
               </td>
               {/* Qunatity  */}
-              <td className="py-5 px-4">
-                <span className="text-sm font-black text-slate-800 italic">
-                  {asset.quantity}
-                </span>
+              <td className="py-6 px-4">
+                <span className="text-xs font-black text-cyan-700 bg-cyan-50 px-3 py-1 rounded-lg">x{asset?.quantity || 1}</span>
               </td>
               {/* Department  */}
               <td className="py-5 px-4">
@@ -155,14 +153,15 @@ const PrincipalClgAssets = () => {
               {/* actions */}
               <td className="py-5 px-6 flex items-center justify-center gap-4 text-slate-400 group-hover:text-slate-700 transition-all">
                 <Eye
+                  title="View details"
                   size={18}
                   onClick={() => { setSelectedAsset(asset); setShowDetails(true); }}
                   className="text-slate-400 hover:text-cyan-600 cursor-pointer"
                 />
-                { <ArrowLeftRight onClick={() => {
+                {<ArrowLeftRight onClick={() => {
                   setSelectedAsset(asset);
                   setIsTransferModelOpen(true);
-                }} size={18} className = {`${asset?.collegeStatus === "Available" ? "block" : "opacity-0" } hover:text-blue-600  hover:scale-110 transition-transform cursor-pointer` }/>}
+                }} title="Transfer" size={18} className={`${asset?.collegeStatus === "Available" ? "block" : "opacity-0"} hover:text-blue-600  hover:scale-110 transition-transform cursor-pointer`} />}
 
               </td>
             </tr>
