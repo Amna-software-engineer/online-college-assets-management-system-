@@ -7,7 +7,7 @@ import { Doughnut } from "react-chartjs-2";
 import { formatDistanceToNow } from "date-fns";
 import StatsCards from '../../components/StatsCards';
 import DataTable from '../../components/DataTable';
-import {useGetAllDept, useVerifyAudit} from '../../api/department.api';
+import { useGetAllDept, useVerifyAudit } from '../../api/department.api';
 
 
 const HODDashboard = () => {
@@ -15,14 +15,14 @@ const HODDashboard = () => {
     const { requestList } = useSelector(state => state?.requests);
     const { facultyList } = useSelector(state => state?.faculty);
     const { deptList: departmentsList } = useSelector(state => state?.departments);
-    const { currUser:user } = useSelector(state => state?.auth);
+    const { currUser: user } = useSelector(state => state?.auth);
     const totalAssetsValue = assetsList && assetsList?.reduce((total, asset) => total + asset?.price * asset?.quantity, 0) || 0;
     const totalLength = assetsList?.length;
     const funtionalAsset = assetsList?.filter(asset => asset?.condition === "New").length; console.log("funtionalAsset", funtionalAsset);
-   const [showAuditModal,setShowAuditModal]= useState(false);
+    const [showAuditModal, setShowAuditModal] = useState(false);
     const MaintenanceHealth = totalLength > 0 ? (funtionalAsset / totalLength) * 100 : 0; //formula= (functional assets /total assets)*100
-     const {loading:auditLoading,verifyAudit}=useVerifyAudit();   
-     const {getDepts}=useGetAllDept();   
+    const { loading: auditLoading, verifyAudit } = useVerifyAudit();
+    const { getDepts } = useGetAllDept();
     // chart data
     const category = [
         { label: 'IT & Electronics', val: assetsList?.filter(asset => asset?.category === "IT & Electronics").length, color: '#06b6d4' }, // bg-cyan-500
@@ -71,7 +71,7 @@ const HODDashboard = () => {
     const handleConfirmAudit = async () => {
         try {
             // Assume you have a hook called useVerifyAudit
-            await verifyAudit(currentDeptData._id,totalUnits);
+            await verifyAudit(currentDeptData._id, totalUnits);
             setShowAuditModal(false);
             // Refresh department data to hide the alert
             await getDepts();
@@ -166,96 +166,107 @@ const HODDashboard = () => {
 
                 {/* 2. Inventory Distribution (Visual Representation) */}
                 <div className="lg:col-span-2 bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-50 relative overflow-hidden">
-                    {category && category.length > 0 ? (
-                        <Doughnut
-                            data={
-                                {
-                                    // all labels should be in single chart
-                                    labels: category.map(cat => cat.label),
-                                    datasets: [
-                                        {
-                                            // vall vaules
-                                            data: category.map(cat => cat.val),
-                                            backgroundColor: category.map(cat => cat.color), //bgcolor for each category
-                                            borderColor: category.map(cat => cat.color),
-                                            cutout: '60%'
-                                        }
-                                    ],
-                                }}
-                            options={{
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                plugins: {
-                                    title: { //chart title 
-                                        display: true,
-                                        text: "Inventory Distribution",
-                                        color: '#1e293b',
-                                        align: "start",  // Text color 
-                                        font: {
-                                            size: 18,       // Text size
-                                            weight: 'bold'
-                                        },
 
-                                    },
-                                    subtitle: {
-                                        display: true,
-                                        text: 'Current department asset spread',
-                                        align: "start",
-                                    },
-                                    legend: {  //catogry text
-                                        display: true,
-                                        position: 'right',
-                                        labels: {
-                                            padding: 30
-                                        }
-                                    }
-                                }
-                            }
-                            }
-                        />
+                    {/* Header Section */}
+                    <div className="flex flex-col mb-6">
+                        <h3 className="text-base font-black text-slate-800 uppercase italic tracking-tighter leading-none">Inventory Distribution</h3>
+                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Current department asset spread</p>
+                    </div>
+
+                    {category && category.length > 0 ? (
+                        <div className="flex flex-col md:flex-row items-center gap-12 h-[250px]">
+
+                            {/* LEFT: CHART SIDE */}
+                            <div className="relative w-full md:w-1/2 h-full">
+                                <Doughnut
+                                    data={{
+                                        labels: category.map(cat => cat.label),
+                                        datasets: [{
+                                            data: category.map(cat => cat.val),
+                                            backgroundColor: category.map(cat => cat.color),
+                                            cutout: '85%', 
+                                            borderRadius: 10,
+                                            spacing: 4
+                                        }]
+                                    }}
+                                    options={{
+                                        responsive: true,
+                                        maintainAspectRatio: false,
+                                        plugins: { legend: { display: false } }
+                                    }}
+                                />
+                                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none mt-4">
+                                    <span className="text-[10px] font-black text-slate-300 uppercase italic">Dept Assets</span>
+                                    <span className="text-3xl font-black text-slate-800 italic leading-none">{category.reduce((a, b) => a + b.val, 0)}</span>
+                                </div>
+                            </div>
+
+                            {/* RIGHT: LEGEND SIDE - All categories visible */}
+                            <div className="w-full md:w-1/2 space-y-3">
+                                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Categories</h4>
+
+                                {category.map((item, i) => (
+                                    <div key={i} className="flex items-center justify-between border-b border-slate-50 pb-2">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
+                                            <span className="text-[11px] font-bold text-slate-700 uppercase">
+                                                {item.label}
+                                            </span>
+                                        </div>
+                                        <span className="text-xs font-black text-slate-900 italic">{item.val}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
                     ) : (
-                        <p className="text-center text-slate-400">No data available</p>
+                        <div className="h-[250px] flex items-center justify-center">
+                            <p className="text-[10px] font-bold text-slate-400 uppercase italic">No data available</p>
+                        </div>
                     )}
                 </div>
 
-                {/* 3. Quick Actions */}
-                <div className="space-y-4">
-                    <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest ml-2">Quick Actions</h3>
-                    <Link to={"/hod/request"} className="w-full bg-white p-5 rounded-3xl border border-slate-100 flex items-center justify-between group hover:border-cyan-500 transition-all shadow-sm">
-                        <div className="flex items-center gap-4">
-                            <div className="bg-cyan-50 p-3 rounded-2xl text-cyan-600"><PlusCircle size={20} /></div>
-                            <div className="text-left">
-                                <p className="text-xs font-black text-slate-800 uppercase italic">Request Asset</p>
-                                <p className="text-[10px] font-bold text-slate-400">Submit new requirement</p>
-                            </div>
-                        </div>
-                        <ChevronRight size={16} className="text-slate-300 group-hover:text-cyan-500" />
-                    </Link>
+                {/* 3. Quick Actions - Aligned to Chart Height */}
+                <div className="flex flex-col h-full">
+                    <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest ml-2 mb-4">Quick Actions</h3>
 
-                    <Link to={"/hod/reports"} className="w-full bg-white p-5 rounded-3xl border border-slate-100 flex items-center justify-between group hover:border-red-500 transition-all shadow-sm">
-                        <div className="flex items-center gap-4">
-                            <div className="bg-red-50 p-3 rounded-2xl text-red-600"><AlertTriangle size={20} /></div>
-                            <div className="text-left">
-                                <p className="text-xs font-black text-slate-800 uppercase italic">Report Damage</p>
-                                <p className="text-[10px] font-bold text-slate-400">Mark item for repair</p>
+                    <div className="flex-1 flex flex-col gap-4">
+                        {/* Request Asset */}
+                        <Link to={"/hod/request"} className="flex-1 min-h-[90px] bg-white p-5 rounded-[2rem] border border-slate-100 flex items-center justify-between group hover:border-cyan-500 hover:shadow-lg transition-all shadow-sm">
+                            <div className="flex items-center gap-4">
+                                <div className="bg-cyan-50 p-3 rounded-2xl text-cyan-600 group-hover:bg-cyan-600 group-hover:text-white transition-all"><PlusCircle size={22} /></div>
+                                <div className="text-left">
+                                    <p className="text-xs font-black text-slate-800 uppercase italic">Request Asset</p>
+                                    <p className="text-[10px] font-bold text-slate-400 leading-tight">Submit new requirement</p>
+                                </div>
                             </div>
-                        </div>
-                        <ChevronRight size={16} className="text-slate-300 group-hover:text-red-500" />
-                    </Link>
-                    <Link to={"/hod/manage-assets"} className="w-full bg-white p-5 rounded-3xl border border-slate-100 flex items-center justify-between group hover:border-cyan-500 transition-all shadow-sm">
-                        <div className="flex items-center gap-4">
-                            <div className="bg-cyan-50 p-3 rounded-2xl text-cyan-600"><UserPlus size={20} /></div>
-                            <div className="text-left">
-                                <p className="text-xs font-black text-slate-800 uppercase italic">Assign Item</p>
-                                <p className="text-[10px] font-bold text-slate-400">Assign item to faculty</p>
+                            <ChevronRight size={18} className="text-slate-300 group-hover:text-cyan-500 transform group-hover:translate-x-1 transition-all" />
+                        </Link>
+
+                        {/* Report Damage */}
+                        <Link to={"/hod/reports"} className="flex-1 min-h-[90px] bg-white p-5 rounded-[2rem] border border-slate-100 flex items-center justify-between group hover:border-red-500 hover:shadow-lg transition-all shadow-sm">
+                            <div className="flex items-center gap-4">
+                                <div className="bg-red-50 p-3 rounded-2xl text-red-600 group-hover:bg-red-600 group-hover:text-white transition-all"><AlertTriangle size={22} /></div>
+                                <div className="text-left">
+                                    <p className="text-xs font-black text-slate-800 uppercase italic">Report Damage</p>
+                                    <p className="text-[10px] font-bold text-slate-400 leading-tight">Mark item for repair</p>
+                                </div>
                             </div>
-                        </div>
-                        <ChevronRight size={16} className="text-slate-300 group-hover:text-cyan-500" />
-                    </Link>
+                            <ChevronRight size={18} className="text-slate-300 group-hover:text-red-500 transform group-hover:translate-x-1 transition-all" />
+                        </Link>
 
-
+                        {/* Assign Item */}
+                        <Link to={"/hod/manage-assets"} className="flex-1 min-h-[90px] bg-white p-5 rounded-[2rem] border border-slate-100 flex items-center justify-between group hover:border-indigo-500 hover:shadow-lg transition-all shadow-sm">
+                            <div className="flex items-center gap-4">
+                                <div className="bg-indigo-50 p-3 rounded-2xl text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all"><UserPlus size={22} /></div>
+                                <div className="text-left">
+                                    <p className="text-xs font-black text-slate-800 uppercase italic">Assign Item</p>
+                                    <p className="text-[10px] font-bold text-slate-400 leading-tight">Assign item to faculty</p>
+                                </div>
+                            </div>
+                            <ChevronRight size={18} className="text-slate-300 group-hover:text-indigo-500 transform group-hover:translate-x-1 transition-all" />
+                        </Link>
+                    </div>
                 </div>
-
             </div>
 
             {/* 4. Activity Log Table */}
