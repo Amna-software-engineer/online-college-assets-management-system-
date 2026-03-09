@@ -15,7 +15,7 @@ const PrincipalReports = () => {
         const matchesDept = selectedDept === 'All' || asset?.department?.name === selectedDept;
         if (view === 'damaged') return matchesDept && asset?.condition === "Maintenance";
         if (view === 'lost') return matchesDept && asset?.condition === "Lost";
-        if (view === 'assigned') return matchesDept && asset?.status === "Assigned";
+        if (view === 'assigned') return matchesDept && asset?.assignedTo;
         return matchesDept;
     });
 
@@ -100,7 +100,7 @@ const PrincipalReports = () => {
 
                 <DataTable
                     data={filteredAssets}
-                    tableHeader={["Dept", "Asset Details", "Qty", "Price", "Condition", "Status"]}
+                    tableHeader={["Dept", "Asset Details", "Qty", "Price", "Condition", "Assigned To","Status"]}
                     renderRow={(asset, i) => (
                         <tr key={i} className={`group ${i % 2 === 0 ? "bg-white" : "bg-slate-50/30"} hover:bg-cyan-50/40 transition-colors`}>
                             <td className="py-5 px-8">
@@ -119,8 +119,11 @@ const PrincipalReports = () => {
                                     asset?.condition === 'Damaged' ? 'bg-rose-50 text-rose-600' : 'bg-amber-50 text-amber-600'
                                     }`}> {asset?.condition} </span>
                             </td>
+                                <td className="py-5 px-4">
+                                    <p className="text-[10px] font-black text-slate-700  italic"> {asset?.assignedTo?.name ? `Prof. ${asset?.assignedTo?.name}` : <span className="text-slate-300">Unassigned</span>} </p>
+                                </td>
                             <td className="py-5 px-4 text-[10px] font-black uppercase text-slate-400 italic">
-                                {asset?.status}
+                                {asset?.deptStatus}
                             </td>
                         </tr>
                     )}

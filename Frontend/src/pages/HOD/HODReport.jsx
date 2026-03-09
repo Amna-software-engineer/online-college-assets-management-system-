@@ -25,8 +25,8 @@ const HODReports = () => {
     });
     const { requestAsset } = useRequestAsset()
     const navigate = useNavigate();
-    const assignedAssets = assetsList?.filter(a => a?.status === "Assigned");
-    const damagedAssets = assetsList?.filter(a => a?.condition === "Damaged");
+    const assignedAssets = assetsList?.filter(a => a?.deptStatus === "Assigned");
+    const damagedAssets = assetsList?.filter(a => a?.condition === "Maintenance");
     const lostAssets = assetsList?.filter(a => a?.condition === "Lost");
     // const assets = assetsList?.filter(a =>  a?.status === "Assigned" || a?.status === "Damaged" || a?.status === "Lost");
     const assets = view === 'assigned' ? assignedAssets : view === 'damaged' ? damagedAssets : view === 'lost' ? lostAssets : assetsList;
@@ -104,16 +104,16 @@ const HODReports = () => {
                                 {/* 4. Status Pill */}
                                 <td className="py-5 px-4">
                                     <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold
-                       ${asset?.status === "Available"
+                       ${asset?.deptStatus === "Available"
                                             ? "bg-emerald-100 text-emerald-700"
-                                            : asset?.status === "Assigned"
+                                            : asset?.deptStatus === "Assigned"
                                                 ? "bg-blue-100 text-blue-700"
                                                 : "bg-amber-100 text-amber-700"
                                         }`}>
-                                        <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${asset?.status === "Available" ? "bg-emerald-500" :
-                                            asset?.status === "Assigned" ? "bg-blue-500" : "bg-amber-500"
+                                        <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${asset?.deptStatus === "Available" ? "bg-emerald-500" :
+                                            asset?.deptStatus === "Assigned" ? "bg-blue-500" : "bg-amber-500"
                                             }`} />
-                                        <span className="text-[10px] font-black uppercase italic">{asset?.status}</span>
+                                        <span className="text-[10px] font-black uppercase italic">{asset?.deptStatus}</span>
                                     </div>
                                 </td>
 
