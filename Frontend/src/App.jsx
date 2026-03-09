@@ -12,6 +12,7 @@ import PrincipalClgAssets from "./pages/principal/PrincipalClgAssets";
 import PrincipalDepartments from "./pages/principal/PrincipalDepartments";
 import HodInfoPage from "./pages/HOD/HodInfo";
 import PrincipalRequest from "./pages/principal/PrincipalRequest";
+import PrincipalReports from "./pages/principal/PrincipalReports";
 
 
 const router = createBrowserRouter([
@@ -37,7 +38,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/principal/reports",
-        element: <ProtectRoute><h1>Reports Page</h1></ProtectRoute>
+        element: <ProtectRoute><PrincipalReports/></ProtectRoute>
       },
     ]
   },
