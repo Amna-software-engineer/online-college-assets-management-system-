@@ -1,11 +1,12 @@
 import Router from "express";
-import { createRequest, deleteFaculty, getRequests, updateRequest } from "../controller/request.controller.js";
+import { createRequest, deleteFaculty, getRequests, updateReqStatus, updateRequest } from "../controller/request.controller.js";
 
 const router = Router();
 
 router.post("/request", createRequest);
 router.get("/request", getRequests);
 router.patch("/request/:id", updateRequest);
+router.patch("/request/status/:id", updateReqStatus);
 router.delete("/request/:id", deleteFaculty);
 
 

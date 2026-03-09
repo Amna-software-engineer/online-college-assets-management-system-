@@ -66,6 +66,7 @@ const HODRequest = () => {
     if (priority === 'Medium') return 'bg-orange-400';
     return 'bg-blue-500';
   }
+console.log(requestList?.filter(req => req.requestType === "Faculty Request"));
 
   if (loading) return <Loader />;
 
@@ -186,7 +187,7 @@ const HODRequest = () => {
              <tr key={index} className={`transition-colors group ${index % 2 === 0 ? "bg-white" : "bg-slate-50/50"} hover:bg-cyan-50/30`}>
                         <td className="p-6 font-black">{req.itemName}</td> {/* name field */}
                         <td className="p-6 text-center">{req.email}</td>
-                        <td className="p-6">{req.department}</td>
+                        <td className="p-6">{req.department.name}</td>
                         <td className="p-6">
                           <span className={`px-3 py-1.5 rounded-xl border text-[9px] font-black uppercase italic ${getStatusStyle(req.status)}`}>
                             {req.status}

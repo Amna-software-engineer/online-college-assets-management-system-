@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { CheckCircle, XCircle, Eye, Clock, Package, UserPlus, AlertTriangle, Banknote } from 'lucide-react';
+import { CheckCircle, XCircle, Eye, Clock, Package, UserPlus, AlertTriangle, Banknote, X, Calendar, User, Hash, FileText, Info } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import Loader from '../../components/Loader';
-import { useUpdateRequest } from '../../api/request.api';
+import { useUpdateReqStatus, useUpdateRequest } from '../../api/request.api';
 import DataTable from '../../components/DataTable';
 import ViewDetailsModal from '../../components/HOD/ViewDetailsModal';
 
 const PrincipalRequest = () => {
   const requestList = useSelector(state => state?.requests?.requestList);
-  const { updateRequest, loading: actionLoading } = useUpdateRequest();
+  const { updateReqStatus, loading: actionLoading } = useUpdateReqStatus();
 
   const [activeTab, setActiveTab] = useState("pending");
   const [selectedRequest, setSelectedRequest] = useState(null);
@@ -28,7 +28,7 @@ const PrincipalRequest = () => {
   ];
 
   const handleAction = async (id, newStatus) => {
-    await updateRequest({ status: newStatus }, id);
+    await updateReqStatus({ status: newStatus }, id);
   };
 
   const getStatusStyle = (status) => {
@@ -38,6 +38,11 @@ const PrincipalRequest = () => {
       default: return 'bg-amber-100 text-amber-700 border-amber-200';
     }
   };
+  const getPriorityDot = (priority) => {
+    if (priority === 'High') return 'bg-red-500';
+    if (priority === 'Medium') return 'bg-orange-400';
+    return 'bg-blue-500';
+  }
 
   return (
     <div className="max-w-5xl mx-auto space-y-8 mb-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -88,7 +93,7 @@ const PrincipalRequest = () => {
                 <p className="text-sm font-black text-slate-900 uppercase italic group-hover:text-cyan-700 transition-colors">
                   {req?.itemName}
                 </p>
-                <p className="text-[10px] text-slate-400 font-mono mt-1 tracking-tighter">
+                <p className="text-[10px] text-slate-400 font-mono mt-1 tracking-tighter truncate max-w-50">
                   Spec: {req?.specifications || "NO SPECS"}
                 </p>
               </td>
@@ -113,20 +118,17 @@ const PrincipalRequest = () => {
               </td>
 
               {/* Priority */}
-              <td className="py-5 px-4">
-                <span className={`flex items-center justify-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-black uppercase
-      ${req.priority === "High"
-                    ? "text-rose-600 bg-rose-50"
-                    : "text-blue-600 bg-blue-50"
-                  }`}>
-                  {req.priority}
-                </span>
+              <td className="py-5 px-4 ">
+                <div className="flex items-center gap-2">
+                  {req?.priority && <div className={`w-2 h-2 rounded-full ${getPriorityDot(req?.priority)}`} />}
+                  <span className="text-[10px] font-black uppercase text-slate-700">{req?.priority}</span>
+                </div>
               </td>
 
               {/* Status */}
               <td className="py-5 px-4">
                 <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold
-      ${req.status === "Approved"
+                 ${req.status === "Approved"
                     ? "bg-emerald-100 text-emerald-700"
                     : req.status === "Rejected"
                       ? "bg-rose-100 text-rose-700"
@@ -134,7 +136,7 @@ const PrincipalRequest = () => {
                   }`}>
 
                   <span className={`w-1.5 h-1.5 rounded-full animate-pulse
-        ${req.status === "Approved"
+                     ${req.status === "Approved"
                       ? "bg-emerald-500"
                       : req.status === "Rejected"
                         ? "bg-rose-500"
@@ -191,13 +193,168 @@ const PrincipalRequest = () => {
           </div>
         )}
       </div>
+      {showDetails && selectedRequest && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
 
-      {showDetails && (
-        <ViewDetailsModal
-          request={selectedRequest}
-          onClose={() => setShowDetails(false)}
-        />
+          <div className="bg-white w-full max-w-xl rounded-2xl shadow-lg border border-slate-100 overflow-hidden">
+
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+              <div>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                  Request Details
+                </p>
+                <h3 className="text-lg font-black text-slate-800 uppercase">
+                  {selectedRequest.itemName}
+                </h3>
+              </div>
+
+              <button
+                onClick={() => setShowDetails(false)}
+                className="p-2 hover:bg-slate-100 rounded-lg text-slate-500"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="p-6 space-y-6">
+
+              {/* Request Info */}
+              <div className="grid grid-cols-2 gap-4">
+
+                <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase">
+                    Requested By
+                  </p>
+                  <p className="text-sm font-semibold text-slate-700 mt-1">
+                    {selectedRequest.RequestorId?.name || "N/A"}
+                  </p>
+                </div>
+
+                <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase">
+                    Date
+                  </p>
+                  <p className="text-sm font-semibold text-slate-700 mt-1">
+                    {new Date(selectedRequest.createdAt).toLocaleDateString()}
+                  </p>
+                </div>
+
+              </div>
+
+              {/* Specifications */}
+              <div>
+                <p className="text-[10px] font-bold text-slate-400 uppercase mb-2">
+                  Specifications
+                </p>
+
+                <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 text-sm text-slate-600">
+                  {selectedRequest.specifications || "No specifications provided"}
+                </div>
+              </div>
+
+              {/* Reason */}
+              {selectedRequest.reason && (
+                <div>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase mb-2">
+                    Reason
+                  </p>
+
+                  <div className="bg-amber-50 border border-amber-100 rounded-xl p-4 text-sm text-slate-600">
+                    {selectedRequest.reason}
+                  </div>
+                </div>
+              )}
+
+              {/* Meta Info */}
+              <div className="flex items-center justify-between pt-2">
+
+                <div>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase">
+                    Quantity
+                  </p>
+                  <span className="text-sm font-black text-cyan-700">
+                    x{selectedRequest.quantity}
+                  </span>
+                </div>
+
+                <div>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase">
+                    Priority
+                  </p>
+
+                  <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase
+          ${selectedRequest.priority === "High"
+                      ? "bg-rose-50 text-rose-600"
+                      : "bg-blue-50 text-blue-600"
+                    }`}>
+                    {selectedRequest.priority}
+                  </span>
+                </div>
+
+                <div>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase">
+                    Status
+                  </p>
+
+                  <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase
+          ${selectedRequest.status === "Approved"
+                      ? "bg-emerald-50 text-emerald-600"
+                      : selectedRequest.status === "Rejected"
+                        ? "bg-rose-50 text-rose-600"
+                        : "bg-amber-50 text-amber-600"
+                    }`}>
+                    {selectedRequest.status}
+                  </span>
+                </div>
+
+              </div>
+
+            </div>
+
+            {/* Footer Actions */}
+            <div className="flex justify-end gap-3 px-6 py-4 border-t border-slate-100">
+
+              {selectedRequest.status === "Pending" && (
+                <>
+                  <button
+                    onClick={() => {
+                      handleAction(selectedRequest._id, "Rejected");
+                      setShowDetails(false);
+                    }}
+                    className="px-4 py-2 bg-rose-50 text-rose-600 rounded-lg text-xs font-bold hover:bg-rose-100"
+                  >
+                    Reject
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      handleAction(selectedRequest._id, "Approved");
+                      setShowDetails(false);
+                    }}
+                    className="px-4 py-2 bg-cyan-600 text-white rounded-lg text-xs font-bold hover:bg-cyan-700"
+                  >
+                    Approve
+                  </button>
+                </>
+              )}
+
+              {selectedRequest.status !== "Pending" && (
+                <button
+                  onClick={() => setShowDetails(false)}
+                  className="px-4 py-2 bg-slate-800 text-white rounded-lg text-xs font-bold"
+                >
+                  Close
+                </button>
+              )}
+
+            </div>
+
+          </div>
+        </div>
       )}
+
     </div>
   );
 };

@@ -10,6 +10,7 @@ export const assetEndPoints = {
 export const requestEndPoints = {
     request: "/request",
     updateRequest: (id) => `/request/${id}`,
+    updateRequestStatus: (id) => `/request/status/${id}`,
     deleteRequest: (id) => `/request/${id}`,
 }
 export const deptEndPoints = {

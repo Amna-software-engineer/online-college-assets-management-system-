@@ -162,6 +162,7 @@ const HODReports = () => {
                                 className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-4 text-sm font-bold text-slate-700 focus:border-rose-400 outline-none appearance-none cursor-pointer"
                                 name='assetId'
                                 onChange={handleSelectChange}
+                                required
                             >
                                 <option value="">Choose Asset Tag...</option>
                                 {assetsList?.filter(a => a.condition !== "Maintenance")?.map((asset, index) => (
@@ -175,12 +176,36 @@ const HODReports = () => {
                             <input type="number" value={formData.quantity}
                                 placeholder="Enter quantity..." name='quantity'
                                 onChange={(e) => setFormData({ ...formData, quantity: parseInt(e.target.value) })}
+                                required
                                 className="w-full bg-slate-50 border-2 border-slate-100 rounded-3xl px-6 py-4 text-sm font-bold text-slate-700 focus:border-rose-400 outline-none transition-all" />
                         </div>
+                        {/* Guidance Note for Backend Logic */}
+                        <div className="bg-rose-50/50 p-4 rounded-2xl flex items-start gap-3 border border-rose-100 mb-2">
+                            <TriangleAlert className="text-rose-500 shrink-0" size={18} />
+                            <div className="space-y-1">
+                                <p className="text-[10px] font-black text-rose-700 uppercase tracking-tight">
+                                    Required Identification
+                                </p>
+                                <p className="text-[10px] font-bold text-rose-600/80 uppercase leading-relaxed">
+                                    Please explicitly mention if the asset is <span className="underline decoration-rose-400 font-black italic">"DAMAGED"</span> or <span className="underline decoration-rose-400 font-black italic">"LOST"</span> in your description. This is required for backend status processing.
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Nature of Damage TextArea */}
                         <div className="space-y-2">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nature of Damage</label>
-                            <textarea value={formData.reason} name='reason'
-                                onChange={(e) => setFormData({ ...formData, reason: e.target.value })} placeholder="Describe what went wrong..." rows="4" className="w-full bg-slate-50 border-2 border-slate-100 rounded-3xl px-6 py-4 text-sm font-bold text-slate-700 focus:border-rose-400 outline-none transition-all resize-none"></textarea>
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
+                                Nature of Damage (Lost/Damaged)
+                            </label>
+                            <textarea
+                                value={formData.reason}
+                                name='reason'
+                                required
+                                onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
+                                placeholder="Example: The asset was LOST during transit... or The screen is DAMAGED..."
+                                rows="4"
+                                className="w-full bg-slate-50 border-2 border-slate-100 rounded-3xl px-6 py-4 text-sm font-bold text-slate-700 focus:border-rose-400 outline-none transition-all resize-none"
+                            />
                         </div>
 
                         <button type='submit' className="w-full bg-[#F43F5E] hover:bg-rose-600 text-white py-5 rounded-4xl text-xs font-black uppercase tracking-widest shadow-xl shadow-rose-100 transition-all">

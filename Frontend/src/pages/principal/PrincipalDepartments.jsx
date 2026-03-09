@@ -177,20 +177,6 @@ const PrincipalDepartments = () => {
                 </div>
                 {/* AUDIT STATUS */}
                 <div className="bg-white border border-slate-100 rounded-[2.5rem] p-6 flex items-center justify-between shadow-sm group">
-                    {/* <div className="flex items-center gap-4">
-                        <div className="p-4 bg-cyan-50 text-[#008BA9] rounded-2xl group-hover:bg-[#008BA9] group-hover:text-white transition-all duration-500">
-                            <ShieldCheck size={26} />
-                        </div>
-                        <div>
-                            <h4 className="font-black text-slate-800 uppercase italic text-xs tracking-tighter">Inventory Audit</h4>
-                            <p className="text-[10px] text-slate-400 font-bold mt-1 uppercase tracking-tighter">
-                                Last Verified: <span className="text-emerald-500 font-black">18 Feb 2026</span>
-                            </p>
-                        </div>
-                    </div>
-                    <button className="bg-cyan-600 hover:bg-[#007894] text-white px-6 py-3 rounded-xl text-[9px] font-black uppercase shadow-lg shadow-cyan-100 transition-all active:scale-95 cursor-pointer">
-                        Request Audit
-                    </button> */}
                     <div className="flex items-center gap-4">
                         <div className="p-4 bg-cyan-50 text-[#008BA9] rounded-2xl group-hover:bg-[#008BA9] group-hover:text-white transition-all duration-500">
                             <ShieldCheck size={26} />

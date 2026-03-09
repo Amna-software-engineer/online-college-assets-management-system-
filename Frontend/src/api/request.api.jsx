@@ -95,6 +95,37 @@ export const useUpdateRequest = () => {
 
     return { updateRequest, loading, error }
 }
+// custome hook to update Req Status 
+export const useUpdateReqStatus = () => {
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState(null)
+    const dispatch = useDispatch();
+    const requestList = useSelector(state => state.assets.requestList);
+    const {getRequests}=useGetAllRequest();
+    const updateReqStatus = async (status,id) => {
+        try {
+            setLoading(true);
+            setError(null);
+            const response = await baseApi.patch(requestEndPoints.updateRequestStatus(id), status);
+            if (response?.data) {
+              await getRequests();
+                toast.success("Request Status updated successfully");
+                return response.data;
+            }
+        } catch (error) {
+            console.log("error ", error);
+            const message = error?.response?.data?.message || error?.message || "Request Status update failed";
+            setError(message);
+            toast.error(message);
+            return null;
+        }
+        finally {
+            setLoading(false)
+        }
+    }
+
+    return { updateReqStatus, loading, error }
+}
 // custome hook to delete request from backend
 export const useDeleteRequest = () => {
     const [loading, setLoading] = useState(false)

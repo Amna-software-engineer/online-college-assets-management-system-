@@ -37,7 +37,7 @@ const assetSchema = new mongoose.Schema({
     },
     deptStatus: {
         type: String,
-        enum: ["Available", "Assigned", "Pending"],
+        enum: ["Available", "Assigned", "Pending","Maintenance"],
         default: "Available"  // HOD/faculty ke liye status
     },
     history: [historySchema]
