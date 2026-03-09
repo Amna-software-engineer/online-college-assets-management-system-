@@ -11,6 +11,7 @@ import { ProtectRoute } from "./components/ProtectRoute";
 import PrincipalClgAssets from "./pages/principal/PrincipalClgAssets";
 import PrincipalDepartments from "./pages/principal/PrincipalDepartments";
 import HodInfoPage from "./pages/HOD/HodInfo";
+import PrincipalRequest from "./pages/principal/PrincipalRequest";
 
 
 const router = createBrowserRouter([
@@ -32,7 +33,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/principal/requests",
-        element: <ProtectRoute><h1>Requests Page</h1></ProtectRoute>
+        element: <ProtectRoute><PrincipalRequest/></ProtectRoute>
       },
       {
         path: "/principal/reports",

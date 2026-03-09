@@ -130,7 +130,6 @@ const PrincipalDashboard = () => {
             <h3 className="text-base font-black text-slate-800 uppercase italic tracking-tighter leading-none">Inventory Distribution</h3>
             <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Asset spread by department</p>
           </div>
-
           {chartData && chartData.length > 0 ? (
             /* MAIN CONTENT WRAPPER - chart and legend side by side */
             <div className="flex flex-col md:flex-row items-center gap-12 h-62.5">

@@ -75,9 +75,9 @@ export const getRequests = async (req, res) => {
         
         if (decoded.role === "HOD") {
             let dptID = decoded.department._id
-            requestList = await requestModel.find({ department: dptID }).populate("RequestorId", "name");
+            requestList = await requestModel.find({ department: dptID }).populate("RequestorId", "name").populate("department","name");
         } else if (decoded.role === "Principal") {
-            requestList = await requestModel.find().populate("RequestorId", "name");
+            requestList = await requestModel.find().populate("RequestorId", "name").populate("department","name");
         }
         return res.status(200).json({ success: true, requestList });
     } catch (error) {
