@@ -25,16 +25,23 @@ app.use("/api", deptRouter);
 app.use("/api", authRouter);
 app.use("/api", verifyToken, assetRouter);
 app.use("/api", verifyToken, requestRouter);
+console.log("mongoDbURL",mongoDbURL);
 
 
-mongoose.connect(mongoDbURL)
-    .then(() => {
-        console.log("Connected to Atlas MongoDB Successfully! 🚀");
-    })
-    .catch((err) => {
-        console.error("MongoDB Connection Error:", err.message);
-    });
+const ConnectDb = async () => {
+    try {
+        const connection = await mongoose.connect(
+            mongoDbURL,
+        );
 
+        if (connection.connection) {
+            console.log("Database Connected Successfully!");
+        }
+    } catch (error) {
+        console.log("Something went wronge while connecting DB");
+    }
+};
+await ConnectDb();
 export default app;
 
 // mongoose.connect(mongoDbURL,)
