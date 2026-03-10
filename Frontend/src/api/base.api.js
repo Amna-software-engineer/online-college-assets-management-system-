@@ -1,7 +1,7 @@
 import axios from "axios";
 
  export const baseApi=axios.create({
-    baseURL: "http://localhost:5000/api",
+    baseURL: "https://online-college-assets-management-sy-tau.vercel.app/api",
     headers: {
         "Content-Type": "application/json",
     }
