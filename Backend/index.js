@@ -26,13 +26,26 @@ app.use("/api", authRouter);
 app.use("/api", verifyToken, assetRouter);
 app.use("/api", verifyToken, requestRouter);
 
-mongoose.connect(mongoDbURL,)
+
+mongoose.connect(mongoDbURL)
     .then(() => {
-        app.listen(PORT, () => {
-            console.log(`Server running on port ${PORT}`);
-        });
         console.log("Connected to Atlas MongoDB Successfully! 🚀");
     })
     .catch((err) => {
-        console.error("Message:", err.message);
+        console.error("MongoDB Connection Error:", err.message);
     });
+
+export default app;
+
+// mongoose.connect(mongoDbURL,)
+//     .then(() => {
+//         app.listen(PORT, () => {
+//             console.log(`Server running on port ${PORT}`);
+//         });
+//         console.log("Connected to Atlas MongoDB Successfully! 🚀");
+//     })
+//     .catch((err) => {
+//         console.error("Message:", err.message);
+//     });
+
+
