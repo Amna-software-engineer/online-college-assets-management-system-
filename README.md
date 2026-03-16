@@ -21,10 +21,7 @@ This is my **Final Project** developed during my **MERN Stack Internship at U De
 
 ---
 
-## 📸 Screenshots & Demo
-*(Tip: Add your project screenshots here)*
-
-**Try the Live Demo:** [\[Link\]](https://online-college-assets-management-sy-tau.vercel.app/)
+**Try the Live Demo:** [\[Demo Link\]](https://online-college-assets-management-sy-tau.vercel.app/)
 
 **Demo Credentials:**
 - **Principal:** `amnahaq.admin@gmail.com` | `123`

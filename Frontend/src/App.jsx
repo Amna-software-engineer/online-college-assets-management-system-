@@ -18,7 +18,7 @@ import PrincipalReports from "./pages/principal/PrincipalReports";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <MainLayout />,
+    element: <ProtectRoute><MainLayout /></ProtectRoute>,
     children: [
       {
         path: "/principal/dashboard",
