@@ -108,14 +108,7 @@ const LoginForm = () => {
                         </div>
                     </div>
 
-                    {/* Forgot Access Button */}
-                    <button
-                        type="button"
-                        className="text-[10px] font-black text-[#0088A8] uppercase tracking-widest hover:underline text-left"
-                    >
-                        Forgot Access?
-                    </button>
-
+                   
                     {/* Submit Button */}
                     <button
                         type="submit"
