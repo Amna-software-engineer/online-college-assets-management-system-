@@ -114,7 +114,7 @@ const LoginForm = () => {
                         type="submit"
                         className="w-full bg-[#0088A8] hover:bg-[#007794] text-white py-5 rounded-2xl font-black text-xs uppercase tracking-[0.25em] shadow-xl shadow-[#0088A8]/20 transition-all active:scale-95 flex items-center justify-center gap-3 italic"
                     >
-                        Authorize Entry <ArrowRight size={18} />
+                        Login <ArrowRight size={18} />
                     </button>
 
                     <div className="pt-4 text-center">

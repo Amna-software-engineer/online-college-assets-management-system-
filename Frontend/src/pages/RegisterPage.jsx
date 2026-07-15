@@ -157,7 +157,7 @@ const RegisterPage = () => {
             type="submit"
             className="w-full bg-[#1E2D44] hover:bg-[#162131] text-white py-5 rounded-2xl font-black text-xs uppercase tracking-[0.25em] shadow-xl shadow-slate-200 transition-all active:scale-95 flex items-center justify-center gap-3 mt-4"
           >
-            Initialize Account <CheckCircle2 size={18} />
+            Register <CheckCircle2 size={18} />
           </button>
 
           <p className="text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest">
