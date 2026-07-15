@@ -4,13 +4,13 @@ const deptSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
-        enum: ["CS", "Botany", "Physics", "Maths", "Chemistry", "Political Science", "Islamyat", "Electronics", "Pak Study", "Urdu", "Pashto"]
+        enum: ["Computer Science", "Botany", "Physics", "Maths", "Chemistry", "Political Science", "Islamyat", "Electronics", "Pak Study", "Urdu", "Pashto"]
     },
     hod: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "userModel",
     },
-    lastAuditDate: { type: Date, default: Date.now },
+    lastAuditDate: { type: Date, default: null },
     auditStatus: {
         type: String,
         enum: ['Verified', 'Pending', 'Requested'],

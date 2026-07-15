@@ -154,8 +154,6 @@ export const getAssets = async (req, res) => {
 
     try {
         let assetList = [];
-        // enum: ["CS", "Maths", "Physics"]
-
         if (decoded.role === "HOD") {
             assetList = await assetModel.find({ department: decoded.department._id }).populate("assignedTo", "name email");
             assetList = assetList.filter(asset => asset.quantity > 0); // HOD ko apne assigned assets nahi dikhane

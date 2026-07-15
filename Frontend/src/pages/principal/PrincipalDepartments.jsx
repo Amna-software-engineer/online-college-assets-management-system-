@@ -195,7 +195,7 @@ const PrincipalDepartments = () => {
 
                     <button
                         onClick={() => handleRequestAudit(selectedDepartment)}
-                        disabled={currentDeptData?.auditStatus === 'Requested'}
+                        disabled={currentDeptData?.auditStatus === 'Requested'||!currentDeptData}
                         className="bg-cyan-600 hover:bg-[#007894] disabled:bg-slate-300 text-white px-6 py-3 rounded-xl text-[9px] font-black uppercase shadow-lg transition-all active:scale-95 cursor-pointer"
                     >
                         {currentDeptData?.auditStatus === 'Requested' ? "Audit Pending" : "Request Audit"}
