@@ -13,7 +13,7 @@ const app = express();
 const PORT = 5000;
 const mongoDbURL = process.env.mongoDbURL;
 app.use(cors({
-    origin: "https://online-college-assets-management-sy-tau.vercel.app",
+    origin: "https://online-college-assets-management-system.vercel.app/",
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
 
 }));
