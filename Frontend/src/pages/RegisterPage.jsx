@@ -161,7 +161,7 @@ const RegisterPage = () => {
           </button>
 
           <p className="text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-            Already authorized? <Link to={"/login"} className="text-[#0088A8] font-black hover:underline italic">Sign In</Link>
+            Already authorized? <Link to={"/login"} className="text-[#0088A8] font-black hover:underline italic">Login</Link>
           </p>
         </form>
       </div>
