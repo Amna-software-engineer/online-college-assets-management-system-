@@ -48,7 +48,7 @@ const PrincipalRequest = () => {
     <div className="max-w-5xl mx-auto space-y-8 mb-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
 
       {/* 1. STATS OVERVIEW */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {stats.map((item, i) => (
           <div key={i} className="bg-white p-5 rounded-3xl border border-slate-50 shadow-sm flex items-center gap-4 hover:shadow-md transition-all">
             <div className="p-3 bg-slate-50 rounded-2xl text-slate-600">{item.icon}</div>
@@ -59,26 +59,26 @@ const PrincipalRequest = () => {
           </div>
         ))}
       </div>
+{/* 2. HEADER & TABS */}
+<div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+    <div>
+        <p className="text-[10px] font-black text-cyan-600 uppercase tracking-[0.3em] mb-1">Request Management</p>
+        <h2 className="text-3xl md:text-4xl font-black text-slate-800 uppercase italic tracking-tighter leading-none">Requisitions</h2>
+    </div>
 
-      {/* 2. HEADER & TABS */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div>
-          <p className="text-[10px] font-black text-cyan-600 uppercase tracking-[0.3em] mb-1">Request Management</p>
-          <h2 className="text-4xl font-black text-slate-800 uppercase italic tracking-tighter leading-none">Requisitions</h2>
-        </div>
-        <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-2 flex gap-2 w-fit">
-          {["pending", "approved", "rejected"].map((tab) => (
+    <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-2 grid grid-cols-3 md:flex gap-2 w-full md:w-fit">
+        {["pending", "approved", "rejected"].map((tab) => (
             <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all
-                ${activeTab === tab ? "bg-cyan-600 text-white shadow-md" : "text-slate-500 hover:bg-slate-100"}`}
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-3 md:px-6 py-2.5 md:py-3 rounded-2xl text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap
+                    ${activeTab === tab ? "bg-cyan-600 text-white shadow-md" : "text-slate-500 hover:bg-slate-100"}`}
             >
-              {tab}
+                {tab}
             </button>
-          ))}
-        </div>
-      </div>
+        ))}
+    </div>
+</div>
 
       {/* 3. DATA TABLE */}
       <div className="bg-white rounded-3xl border border-slate-100 shadow-md overflow-hidden">

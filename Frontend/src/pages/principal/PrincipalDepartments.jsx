@@ -26,7 +26,7 @@ const PrincipalDepartments = () => {
     const [selectedAsset, setSelectedAsset] = useState(null);
     const [isOpen, setIsOpen] = useState(false)
     const [isChangeHOD, setIsChangeHOD] = useState(false)
-    const {requestAudit}=useRequestAudit();
+    const { requestAudit } = useRequestAudit();
 
     const filteredAssets = assetsList?.filter(a => {
         const matchesSearch = a?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -83,15 +83,15 @@ const PrincipalDepartments = () => {
             toast.error("Please select a specific department first");
             return;
         }
-       await requestAudit(deptId);
+        await requestAudit(deptId);
 
     }
     return (
         <div className="max-w-5xl mx-auto space-y-8 mb-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* 1. ACTIONS & STATS ROW */}
-            <div className="  space-y-8 rounded-[3rem]  ">
+            <div className="space-y-8 rounded-[3rem]">
                 {/* STATS OVERVIEW */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     {stats.map((item, i) => (
                         <div key={i} className="bg-white p-5 rounded-3xl border border-slate-50 shadow-sm flex items-center gap-4 hover:shadow-md transition-all">
                             <div className="p-3 bg-slate-50 rounded-2xl text-slate-600">{item.icon}</div>
@@ -102,83 +102,96 @@ const PrincipalDepartments = () => {
                         </div>
                     ))}
                 </div>
+
                 {/* dept title & Search & Dpt Selection */}
-                <div className="flex flex-col md:flex-row justify-between items-end gap-4">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
                     <div>
                         <p className="text-[10px] font-black text-cyan-600 uppercase tracking-[0.3em] mb-1">Stock Management</p>
-                        <h2 className="text-4xl font-black text-slate-800 uppercase italic tracking-tighter leading-none">
-                        </h2>
-                        <h2 className="text-4xl font-black text-slate-800 uppercase italic tracking-tighter leading-none">
+                        <h2 className="text-3xl md:text-4xl font-black text-slate-800 uppercase italic tracking-tighter leading-none">
                             {selectedDepartment !== "All"
                                 ? departmentsList.find(d => d._id === selectedDepartment)?.name
                                 : "All"}
                         </h2>
                     </div>
 
-                    <div className="flex gap-3 w-full md:w-auto">
-                        <select
-                            value={selectedDepartment}
-                            onChange={(e) => {
-                                setSelectedDepartment(e.target.value);
-                            }} className="bg-white border-2 border-slate-100 rounded-2xl px-4 py-3 text-[10px] font-black uppercase text-slate-700 outline-none focus:border-cyan-500 transition-all"
-                        >
-                            <option value="All">All College</option>
-                            {departmentsList?.map(d =>
-                                <option key={d._id} value={d._id}>{d.name}</option>
-                            )}
-                        </select>
-                        <div className="relative flex-1 md:w-72">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
-                            <input
-                                type="text"
-                                placeholder="Search assets..."
-                                className="w-full pl-12 pr-4 py-3.5 bg-white border-2 border-slate-100 rounded-2xl text-xs font-bold outline-none focus:border-cyan-500 shadow-sm"
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                            />
+                    <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                        <div className="flex gap-3 w-full sm:w-auto">
+                            <select
+                                value={selectedDepartment}
+                                onChange={(e) => setSelectedDepartment(e.target.value)}
+                                className="flex-1 sm:flex-none bg-white border-2 border-slate-100 rounded-2xl px-4 py-3 text-[10px] font-black uppercase text-slate-700 outline-none focus:border-cyan-500 transition-all"
+                            >
+                                <option value="All">All College</option>
+                                {departmentsList?.map(d =>
+                                    <option key={d._id} value={d._id}>{d.name}</option>
+                                )}
+                            </select>
+
+                            <div className="relative flex-1 sm:w-72">
+                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
+                                <input
+                                    type="text"
+                                    placeholder="Search assets..."
+                                    className="w-full pl-12 pr-4 py-3.5 bg-white border-2 border-slate-100 rounded-2xl text-xs font-bold outline-none focus:border-cyan-500 shadow-sm"
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
+                            </div>
                         </div>
-                        <button className="px-4 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-xl transition cursor-pointer" onClick={() => { setIsOpen(true); }}>Add Department</button>
-                        <button className="px-4 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-xl transition cursor-pointer" onClick={() => { setShowAddHod(true); setIsChangeHOD(false) }}>Assin HOD</button>
+
+                        <div className="grid grid-cols-2 sm:flex gap-3">
+                            <button
+                                className="px-4 py-3 sm:py-0 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-xl transition cursor-pointer whitespace-nowrap"
+                                onClick={() => setIsOpen(true)}
+                            >
+                                Add Department
+                            </button>
+                            <button
+                                className="px-4 py-3 sm:py-0 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-xl transition cursor-pointer whitespace-nowrap"
+                                onClick={() => { setShowAddHod(true); setIsChangeHOD(false); }}
+                            >
+                                Assign HOD
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-            {/* 2.  CONTEXT CARDS (HOD & Audit) */}
+
+            {/* 2. CONTEXT CARDS (HOD & Audit) */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* HOD INFO */}
-                <div className="bg-[#1e293b] rounded-[2.5rem] p-6 text-white flex items-center justify-between shadow-xl relative overflow-hidden group">
+                <div className="bg-[#1e293b] rounded-[2.5rem] p-6 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xl relative overflow-hidden group">
                     <div className="absolute -right-4 -top-4 w-24 h-24 bg-cyan-500/10 rounded-full blur-2xl group-hover:bg-cyan-500/20 transition-all"></div>
                     <div className="flex items-center gap-5">
-                        <div className="w-14 h-14 bg-slate-800 rounded-2xl flex items-center justify-center border border-slate-700 shadow-inner">
+                        <div className="w-14 h-14 shrink-0 bg-slate-800 rounded-2xl flex items-center justify-center border border-slate-700 shadow-inner">
                             <User size={24} className="text-cyan-400" />
                         </div>
-                        <div>
+                        <div className="min-w-0">
                             <p className="text-[8px] font-black text-cyan-500 uppercase tracking-widest">Head of Department</p>
-
-                            {/* Name */}
-                            <h4 className="text-lg font-black italic tracking-tight">
+                            <h4 className="text-lg font-black italic tracking-tight truncate">
                                 {currentDeptHOD.length > 0
                                     ? `Prof. ${currentDeptHOD[0].name}`
                                     : "No HOD Assigned"}
                             </h4>
-
-                            {/* Email */}
                             <div className="flex items-center gap-2 text-[10px] text-slate-400 mt-1 font-medium">
-                                <Mail size={12} className="text-slate-500" />
-                                <span>
-                                    {currentDeptHOD.length > 0
-                                        ? currentDeptHOD[0].email
-                                        : "—"}
+                                <Mail size={12} className="text-slate-500 shrink-0" />
+                                <span className="truncate">
+                                    {currentDeptHOD.length > 0 ? currentDeptHOD[0].email : "—"}
                                 </span>
                             </div>
                         </div>
                     </div>
-                    <button onClick={() => { setIsChangeHOD(true); setShowAddHod(true); }} className="bg-slate-800 hover:bg-cyan-600 px-5 py-2.5 rounded-xl text-[9px] font-black uppercase border border-slate-700 transition-all active:scale-95 cursor-pointer">
+                    <button
+                        onClick={() => { setIsChangeHOD(true); setShowAddHod(true); }}
+                        className="self-start sm:self-auto shrink-0 bg-slate-800 hover:bg-cyan-600 px-5 py-2.5 rounded-xl text-[9px] font-black uppercase border border-slate-700 transition-all active:scale-95 cursor-pointer"
+                    >
                         Change HOD
                     </button>
                 </div>
+
                 {/* AUDIT STATUS */}
-                <div className="bg-white border border-slate-100 rounded-[2.5rem] p-6 flex items-center justify-between shadow-sm group">
+                <div className="bg-white border border-slate-100 rounded-[2.5rem] p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm group">
                     <div className="flex items-center gap-4">
-                        <div className="p-4 bg-cyan-50 text-[#008BA9] rounded-2xl group-hover:bg-[#008BA9] group-hover:text-white transition-all duration-500">
+                        <div className="p-4 shrink-0 bg-cyan-50 text-[#008BA9] rounded-2xl group-hover:bg-[#008BA9] group-hover:text-white transition-all duration-500">
                             <ShieldCheck size={26} />
                         </div>
                         <div>
@@ -195,13 +208,12 @@ const PrincipalDepartments = () => {
 
                     <button
                         onClick={() => handleRequestAudit(selectedDepartment)}
-                        disabled={currentDeptData?.auditStatus === 'Requested'||!currentDeptData}
-                        className="bg-cyan-600 hover:bg-[#007894] disabled:bg-slate-300 text-white px-6 py-3 rounded-xl text-[9px] font-black uppercase shadow-lg transition-all active:scale-95 cursor-pointer"
+                        disabled={currentDeptData?.auditStatus === 'Requested' || !currentDeptData}
+                        className="self-start sm:self-auto shrink-0 bg-cyan-600 hover:bg-[#007894] disabled:bg-slate-300 text-white px-6 py-3 rounded-xl text-[9px] font-black uppercase shadow-lg transition-all active:scale-95 cursor-pointer"
                     >
                         {currentDeptData?.auditStatus === 'Requested' ? "Audit Pending" : "Request Audit"}
                     </button>
                 </div>
-
             </div>
 
             {/* 3. DATA TABLE */}
