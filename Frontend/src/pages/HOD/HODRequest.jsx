@@ -73,44 +73,45 @@ console.log(requestList?.filter(req => req.requestType === "Faculty Request"));
   return (
     <div className="max-w-5xl mx-auto space-y-8 mb-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Top Menu Tabs */}
-      <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-2 flex gap-2 w-fit">
-        <button
-          onClick={() => setActiveTab("history")}
-          className={`px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all
+ {/* Top Menu Tabs */}
+<div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-2 flex gap-2 w-full md:w-fit overflow-x-auto no-scrollbar">
+  <button
+    onClick={() => setActiveTab("history")}
+    className={`shrink-0 px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all
        ${activeTab === "history" ? "bg-cyan-600 text-white shadow-md" : "text-slate-500 hover:bg-slate-100"}`} >
-          View History
-        </button>
+    View History
+  </button>
 
-        <button
-          onClick={() => setActiveTab("reports")}
-          className={`px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all
+  <button
+    onClick={() => setActiveTab("reports")}
+    className={`shrink-0 px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all
             ${activeTab === "reports" ? "bg-cyan-600 text-white shadow-md" : "text-slate-500 hover:bg-slate-100"}`} >
-          Reports
-        </button>
+    Reports
+  </button>
 
-        <button
-          onClick={() => setActiveTab("faculty")}
-          className={`px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all
+  <button
+    onClick={() => setActiveTab("faculty")}
+    className={`shrink-0 px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all
             ${activeTab === "faculty" ? "bg-cyan-600 text-white shadow-md" : "text-slate-500 hover:bg-slate-100"}`} >
-          Faculty List
-        </button>
+    Faculty List
+  </button>
 
-        <button
-          onClick={() => setActiveTab("request")}
-          className={`px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all
+  <button
+    onClick={() => setActiveTab("request")}
+    className={`shrink-0 px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all
         ${activeTab === "request" ? "bg-cyan-600 text-white shadow-md" : "text-slate-500 hover:bg-slate-100"}`} >
-          Request Asset
-        </button>
+    Request Asset
+  </button>
 
-      </div>
-      {/* Request tables */}
-      {(activeTab === "history" || activeTab === "reports") && <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h3 className="text-xl font-black italic uppercase text-slate-800">My {activeTab === "history" ? "Request" : "Maintenance"} History</h3>
-          <span className="text-[10px] font-bold bg-slate-100 px-3 py-1 rounded-full text-slate-500 uppercase">
-            Total: {requestList?.length || 0}
-          </span>
-        </div>
+</div>
+{/* Request tables */}
+{(activeTab === "history" || activeTab === "reports") && <div className="space-y-6">
+  <div className="flex items-center justify-between">
+    <h3 className="text-xl font-black italic uppercase text-slate-800">My {activeTab === "history" ? "Request" : "Maintenance"} History</h3>
+    <span className="text-[10px] font-bold bg-slate-100 px-3 py-1 rounded-full text-slate-500 uppercase">
+      Total: {requestList?.length || 0}
+    </span>
+  </div>
         {/* Request List Table */}
 
         <div div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
@@ -175,7 +176,7 @@ console.log(requestList?.filter(req => req.requestType === "Faculty Request"));
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <h3 className="text-xl font-black italic uppercase text-slate-800">My Faculty Request History</h3>
-            <span className="text-[10px] font-bold bg-slate-100 px-3 py-1 rounded-full text-slate-500 uppercase">
+            <span className=" font-bold bg-slate-100 px-3 py-1 rounded-full text-slate-500 uppercase">
               Total: {requestList?.length || 0}
             </span>
           </div>
