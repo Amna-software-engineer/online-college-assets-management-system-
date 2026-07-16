@@ -2,7 +2,7 @@ import axios from "axios";
 
 const isLocalhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
 export const baseApi=axios.create({
-    baseURL: isLocalhost ? "http://localhost:5000/api" : "https://online-college-assets-management-system.vercel.app/api",
+    baseURL: isLocalhost ? "http://localhost:5000/api" : "https://online-college-assets-management-sy.vercel.app/api",
     headers: {
         "Content-Type": "application/json",
     }

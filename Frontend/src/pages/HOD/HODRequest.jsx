@@ -42,9 +42,9 @@ const HODRequest = () => {
     const response = await requestAsset(data);
     if (response?.success) setActiveTab("history");
   };
-  const handleUpdate = async (data,id) => {
+  const handleUpdate = async (data, id) => {
     console.log("data handleUpdate", data);
-    const response = await updateRequest(data,id);
+    const response = await updateRequest(data, id);
     if (response?.success) setActiveTab("history");
   };
   const handleDelete = async (id) => {
@@ -66,107 +66,106 @@ const HODRequest = () => {
     if (priority === 'Medium') return 'bg-orange-400';
     return 'bg-blue-500';
   }
-console.log(requestList?.filter(req => req.requestType === "Faculty Request"));
+  console.log(requestList?.filter(req => req.requestType === "Faculty Request"));
 
   if (loading) return <Loader />;
 
   return (
     <div className="max-w-5xl mx-auto space-y-8 mb-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Top Menu Tabs */}
- {/* Top Menu Tabs */}
-<div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-2 flex gap-2 w-full md:w-fit overflow-x-auto no-scrollbar">
-  <button
-    onClick={() => setActiveTab("history")}
-    className={`shrink-0 px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all
+      <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-2 flex gap-2 w-full md:w-fit overflow-x-auto no-scrollbar">
+        <button
+          onClick={() => setActiveTab("history")}
+          className={`shrink-0 px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all
        ${activeTab === "history" ? "bg-cyan-600 text-white shadow-md" : "text-slate-500 hover:bg-slate-100"}`} >
-    View History
-  </button>
+          View History
+        </button>
 
-  <button
-    onClick={() => setActiveTab("reports")}
-    className={`shrink-0 px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all
+        <button
+          onClick={() => setActiveTab("reports")}
+          className={`shrink-0 px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all
             ${activeTab === "reports" ? "bg-cyan-600 text-white shadow-md" : "text-slate-500 hover:bg-slate-100"}`} >
-    Reports
-  </button>
+          Reports
+        </button>
 
-  <button
-    onClick={() => setActiveTab("faculty")}
-    className={`shrink-0 px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all
+        <button
+          onClick={() => setActiveTab("faculty")}
+          className={`shrink-0 px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all
             ${activeTab === "faculty" ? "bg-cyan-600 text-white shadow-md" : "text-slate-500 hover:bg-slate-100"}`} >
-    Faculty List
-  </button>
+          Faculty List
+        </button>
 
-  <button
-    onClick={() => setActiveTab("request")}
-    className={`shrink-0 px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all
+        <button
+          onClick={() => setActiveTab("request")}
+          className={`shrink-0 px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all
         ${activeTab === "request" ? "bg-cyan-600 text-white shadow-md" : "text-slate-500 hover:bg-slate-100"}`} >
-    Request Asset
-  </button>
+          Request Asset
+        </button>
 
-</div>
-{/* Request tables */}
-{(activeTab === "history" || activeTab === "reports") && <div className="space-y-6">
-  <div className="flex items-center justify-between">
-    <h3 className="text-xl font-black italic uppercase text-slate-800">My {activeTab === "history" ? "Request" : "Maintenance"} History</h3>
-    <span className="text-[10px] font-bold bg-slate-100 px-3 py-1 rounded-full text-slate-500 uppercase">
-      Total: {requestList?.length || 0}
-    </span>
-  </div>
+      </div>
+      {/* Request tables */}
+      {(activeTab === "history" || activeTab === "reports") && <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h3 className="text-xl font-black italic uppercase text-slate-800">My {activeTab === "history" ? "Request" : "Maintenance"} History</h3>
+          <span className="text-[10px] font-bold bg-slate-100 px-3 py-1 rounded-full text-slate-500 uppercase">
+            Total: {requestList?.length || 0}
+          </span>
+        </div>
         {/* Request List Table */}
 
         <div div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
-          <DataTable 
-          data={requestList?.filter(req=> {
-            if (activeTab === "history") return req.requestType === "New Asset";
-            if (activeTab === "reports") return req.requestType === "Maintenance";
-            return false;
-          } )}
-           tableHeader={["Asset & Specs", "Qty", "Priority", "Status", "Date", "Actions"]} 
-          renderRow={(req,index)=>  
-          <tr key={index} className={`transition-colors group ${index % 2 === 0 ? "bg-white" : "bg-slate-50/50"} hover:bg-cyan-50/30`}>
-                    <td className="p-6">
-                      <p className="text-sm font-black text-slate-900 italic uppercase">{req.itemName}</p>
-                      <p className="text-[10px] font-bold text-slate-500 truncate max-w-50 mt-1">
-                        {req.specifications || "No specs provided"}
-                      </p>
-                    </td>
-                    <td className="p-6 text-center">
-                      <span className="text-xs font-black text-cyan-700 bg-cyan-50 px-2 py-1 rounded-lg">
-                        x{req.quantity}
-                      </span>
-                    </td>
-                    <td className="p-6">
-                      <div className="flex items-center gap-2">
-                        <div className={`w-2 h-2 rounded-full ${getPriorityDot(req?.priority)}`} />
-                        <span className="text-[10px] font-black uppercase text-slate-700">{req.priority}</span>
-                      </div>
-                    </td>
-                    <td className="p-6">
-                      <span className={`px-3 py-1.5 rounded-xl border text-[9px] font-black uppercase italic ${getStatusStyle(req.status)}`}>
-                        {req.status}
-                      </span>
-                    </td>
-                    <td className="p-6 text-right">
-                      <p className="text-[10px] font-bold text-slate-500"> {new Date(req.createdAt).toLocaleDateString('en-GB')} </p>
-                    </td>
-                    {req?.status === "Pending" && <td className="p-6">
-                      <div className="flex items-center justify-center gap-4 text-slate-400 group-hover:text-slate-700 transition-all">
-                        <Pen size={18} onClick={() => {
-                          setFormData({
-                            ...formData, RequestorId: user?.userId,
-                            category: req?.category || "",
-                            itemName: req?.itemName || "",
-                            specifications: req?.specifications || "",
-                            priority: req?.priority || "Low",
-                            quantity: req?.quantity || 1,
-                            reason: req?.reason || ""
-                          }); setActiveTab("request"); setIsEdit(true); setSelectedRequest(req);
-                        }} className="hover:text-cyan-600 cursor-pointer transition-colors" />
-                      </div>
-                    </td>}
-                  </tr>}/>
-         
-         
+          <DataTable
+            data={requestList?.filter(req => {
+              if (activeTab === "history") return req.requestType === "New Asset";
+              if (activeTab === "reports") return req.requestType === "Maintenance";
+              return false;
+            })}
+            tableHeader={["Asset & Specs", "Qty", "Priority", "Status", "Date", "Actions"]}
+            renderRow={(req, index) =>
+              <tr key={index} className={`transition-colors group ${index % 2 === 0 ? "bg-white" : "bg-slate-50/50"} hover:bg-cyan-50/30`}>
+                <td className="p-6">
+                  <p className="text-sm font-black text-slate-900 italic uppercase">{req.itemName}</p>
+                  <p className="text-[10px] font-bold text-slate-500 truncate max-w-50 mt-1">
+                    {req.specifications || "No specs provided"}
+                  </p>
+                </td>
+                <td className="p-6 text-center">
+                  <span className="text-xs font-black text-cyan-700 bg-cyan-50 px-2 py-1 rounded-lg">
+                    x{req.quantity}
+                  </span>
+                </td>
+                <td className="p-6">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-2 h-2 rounded-full ${getPriorityDot(req?.priority)}`} />
+                    <span className="text-[10px] font-black uppercase text-slate-700">{req.priority}</span>
+                  </div>
+                </td>
+                <td className="p-6">
+                  <span className={`px-3 py-1.5 rounded-xl border text-[9px] font-black uppercase italic ${getStatusStyle(req.status)}`}>
+                    {req.status}
+                  </span>
+                </td>
+                <td className="p-6 text-right">
+                  <p className="text-[10px] font-bold text-slate-500"> {new Date(req.createdAt).toLocaleDateString('en-GB')} </p>
+                </td>
+                {req?.status === "Pending" && <td className="p-6">
+                  <div className="flex items-center justify-center gap-4 text-slate-400 group-hover:text-slate-700 transition-all">
+                    <Pen size={18} onClick={() => {
+                      setFormData({
+                        ...formData, RequestorId: user?.userId,
+                        category: req?.category || "",
+                        itemName: req?.itemName || "",
+                        specifications: req?.specifications || "",
+                        priority: req?.priority || "Low",
+                        quantity: req?.quantity || 1,
+                        reason: req?.reason || ""
+                      }); setActiveTab("request"); setIsEdit(true); setSelectedRequest(req);
+                    }} className="hover:text-cyan-600 cursor-pointer transition-colors" />
+                  </div>
+                </td>}
+              </tr>} />
+
+
         </div>
 
       </div>
@@ -181,29 +180,29 @@ console.log(requestList?.filter(req => req.requestType === "Faculty Request"));
             </span>
           </div>
           {/* Faculty Requests Table */}
-          <DataTable 
-          data={requestList?.filter(req => req.requestType === "Faculty Request")}
-          tableHeader={["Faculty Name", "Email", "Department", "Status", "Date", "Actions"]}
-          renderRow={(req,index)=>(
-             <tr key={index} className={`transition-colors group ${index % 2 === 0 ? "bg-white" : "bg-slate-50/50"} hover:bg-cyan-50/30`}>
-                        <td className="p-6 font-black">{req.itemName}</td> {/* name field */}
-                        <td className="p-6 text-center">{req.email}</td>
-                        <td className="p-6">{req.department.name}</td>
-                        <td className="p-6">
-                          <span className={`px-3 py-1.5 rounded-xl border text-[9px] font-black uppercase italic ${getStatusStyle(req.status)}`}>
-                            {req.status}
-                          </span>
-                        </td>
-                        <td className="p-6 text-right">{new Date(req.createdAt).toLocaleDateString("en-GB")}</td>
-                        {req.status === "Pending" && (
-                        <td className="p-6">
-                          <div className="flex items-center justify-center gap-4 text-slate-400 group-hover:text-slate-700 transition-all">
-                            <Trash2 size={18} onClick={() => { handleDelete(req._id); }} className="hover:text-red-600 cursor-pointer transition-colors" />
-                          </div>
-                        </td>
-                      )}
-                      </tr>
-          )}
+          <DataTable
+            data={requestList?.filter(req => req.requestType === "Faculty Request")}
+            tableHeader={["Faculty Name", "Email", "Department", "Status", "Date", "Actions"]}
+            renderRow={(req, index) => (
+              <tr key={index} className={`transition-colors group ${index % 2 === 0 ? "bg-white" : "bg-slate-50/50"} hover:bg-cyan-50/30`}>
+                <td className="p-6 font-black">{req.itemName}</td> {/* name field */}
+                <td className="p-6 text-center">{req.email}</td>
+                <td className="p-6">{req.department.name}</td>
+                <td className="p-6">
+                  <span className={`px-3 py-1.5 rounded-xl border text-[9px] font-black uppercase italic ${getStatusStyle(req.status)}`}>
+                    {req.status}
+                  </span>
+                </td>
+                <td className="p-6 text-right">{new Date(req.createdAt).toLocaleDateString("en-GB")}</td>
+                {req.status === "Pending" && (
+                  <td className="p-6">
+                    <div className="flex items-center justify-center gap-4 text-slate-400 group-hover:text-slate-700 transition-all">
+                      <Trash2 size={18} onClick={() => { handleDelete(req._id); }} className="hover:text-red-600 cursor-pointer transition-colors" />
+                    </div>
+                  </td>
+                )}
+              </tr>
+            )}
           />
         </div>
       )}
@@ -216,7 +215,7 @@ console.log(requestList?.filter(req => req.requestType === "Faculty Request"));
               <PlusCircle size={28} strokeWidth={2.5} />
               <h3 className="text-xl font-black italic uppercase">{isEdit ? "Update Asset Requisition" : "New Asset Requisition"}</h3>
             </div>
-            <form className="grid grid-cols-1 md:grid-cols-2 gap-8" onSubmit={(e) => { e.preventDefault(); isEdit ? handleUpdate(formData,selectedRequest._id) : handleSubmit(formData); }}>
+            <form className="grid grid-cols-1 md:grid-cols-2 gap-8" onSubmit={(e) => { e.preventDefault(); isEdit ? handleUpdate(formData, selectedRequest._id) : handleSubmit(formData); }}>
               {/* Item Name */}
               <div className="flex flex-col gap-2">
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Item Name / Model</label>
