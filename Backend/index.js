@@ -13,7 +13,7 @@ const app = express();
 const PORT = 5000;
 const mongoDbURL = process.env.mongoDbURL;
 app.use(cors({
-    origin: "https://online-college-assets-management-system.vercel.app",
+    origin:[ "https://online-college-assets-management-system.vercel.app", "http://localhost:5173" ],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
 
 }));
@@ -45,4 +45,6 @@ await ConnectDb();
 export default app;
 
 
-
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
