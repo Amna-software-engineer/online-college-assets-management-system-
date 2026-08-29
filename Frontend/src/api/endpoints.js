@@ -1,6 +1,8 @@
 export const authEndPoints = {
     register: "/auth/register",
     login: "/auth/login",
+    resetPassword: "/reset-password",
+    ChangeHod:"/send-hod-setup"
 }
 export const assetEndPoints = {
     asset: "/asset",

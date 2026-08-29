@@ -28,6 +28,7 @@ const HODReports = () => {
     const assignedAssets = assetsList?.filter(a => a?.deptStatus === "Assigned");
     const damagedAssets = assetsList?.filter(a => a?.condition === "Maintenance");
     const lostAssets = assetsList?.filter(a => a?.condition === "Lost");
+    const [slectedDamagedAsset, setslectedDamagedAsset] = useState()
     // const assets = assetsList?.filter(a =>  a?.status === "Assigned" || a?.status === "Damaged" || a?.status === "Lost");
     const assets = view === 'assigned' ? assignedAssets : view === 'damaged' ? damagedAssets : view === 'lost' ? lostAssets : assetsList;
     // handlers
@@ -41,6 +42,9 @@ const HODReports = () => {
     }
     const handleSelectChange = (e) => {
         const asset = assetsList?.find(a => a._id === e.target.value);
+        setslectedDamagedAsset(asset)
+        console.log("setslectedDamagedAsset",asset);
+        
         setFormData({ ...formData, assetId: asset?._id, category: asset?.category, itemName: asset?.name })
     }
     const csvData = assets?.map(a => ({
@@ -98,7 +102,7 @@ const HODReports = () => {
 
                                 {/* 3. Quantity */}
                                 <td className="py-5 px-4">
-                                    <span className="text-sm font-black text-slate-800 italic"> {asset.quantity} </span>
+                                    <span className="text-sm font-black text-slate-800 italic" > {asset.quantity} </span>
                                 </td>
 
                                 {/* 4. Status Pill */}
@@ -173,8 +177,12 @@ const HODReports = () => {
                         </div>
                         <div className="space-y-2">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Quantity</label>
-                            <input type="number" value={formData.quantity}
-                                placeholder="Enter quantity..." name='quantity'
+                            <input type="number" 
+                            value={formData.quantity}
+                            min="1"
+                            max={slectedDamagedAsset?.quantity}
+                                placeholder="Enter quantity..." 
+                                name='quantity'
                                 onChange={(e) => setFormData({ ...formData, quantity: parseInt(e.target.value) })}
                                 required
                                 className="w-full bg-slate-50 border-2 border-slate-100 rounded-3xl px-6 py-4 text-sm font-bold text-slate-700 focus:border-rose-400 outline-none transition-all" />

@@ -11,6 +11,7 @@ import AddDepartmentModal from '../../components/principal/AddDepartmentModal';
 import AddHodModel from '../../components/principal/AddHodModel';
 import { useRequestAudit } from '../../api/department.api';
 import { toast } from 'react-toastify';
+import { useResetPassword, useSendHODSetup } from '../../api/auth.api';
 
 const PrincipalDepartments = () => {
     const { deptList: departmentsList } = useSelector(state => state?.departments);
@@ -27,6 +28,7 @@ const PrincipalDepartments = () => {
     const [isOpen, setIsOpen] = useState(false)
     const [isChangeHOD, setIsChangeHOD] = useState(false)
     const { requestAudit } = useRequestAudit();
+    const { sendHODSetup } = useSendHODSetup();
 
     const filteredAssets = assetsList?.filter(a => {
         const matchesSearch = a?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -77,6 +79,8 @@ const PrincipalDepartments = () => {
         f.role === "HOD" &&
         f.status === "Active"
     ) || [];
+    console.log("currentDeptHOD",currentDeptHOD);
+    
     // Request Audit Handler
     const handleRequestAudit = async (deptId) => {
         if (!deptId || deptId === "All") {
@@ -86,6 +90,14 @@ const PrincipalDepartments = () => {
         await requestAudit(deptId);
 
     }
+    const handleChangeHod = async (hodId) => {
+        console.log(hodId);
+        
+      const res=  await sendHODSetup(hodId);
+      console.log(" handleChangeHod ",res);
+      
+    }
+
     return (
         <div className="max-w-5xl mx-auto space-y-8 mb-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* 1. ACTIONS & STATS ROW */}
@@ -181,7 +193,7 @@ const PrincipalDepartments = () => {
                         </div>
                     </div>
                     <button
-                        onClick={() => { setIsChangeHOD(true); setShowAddHod(true); }}
+                        onClick={() => {handleChangeHod(currentDeptHOD[0]?._id)}}
                         className="self-start sm:self-auto shrink-0 bg-slate-800 hover:bg-cyan-600 px-5 py-2.5 rounded-xl text-[9px] font-black uppercase border border-slate-700 transition-all active:scale-95 cursor-pointer"
                     >
                         Change HOD

@@ -4,6 +4,7 @@ import { authEndPoints } from "./endpoints"
 import { baseApi } from "./base.api"
 import { toast } from "react-toastify"
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom"
 
 export const UseLogin = () => {
     const [loading, setLoading] = useState(false)
@@ -68,3 +69,45 @@ export const useRegister = () => {
 
     return {register,loading,error}
 }
+export const useSendHODSetup = () => {
+    const [loading, setLoading] = useState(false);
+
+    const sendHODSetup = async (hodId) => {
+        try {
+            setLoading(true);
+            const res = await baseApi.post(authEndPoints.ChangeHod, { hodId });
+            toast.success(res.data.message);
+        } catch (error) {
+            const message = error?.response?.data?.message || "Something went wrong";
+            toast.error(message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return { sendHODSetup, loading };
+};
+export const useResetPassword = () => {
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+
+    const resetPassword = async (token, name, password) => {
+        try {
+            setLoading(true);
+            const res = await baseApi.post(authEndPoints.resetPassword, {
+                token,
+                name,
+                password
+            });
+            toast.success(res.data.message);
+            setTimeout(() => navigate("/login"), 2000);
+        } catch (error) {
+            const message = error?.response?.data?.message || "Something went wrong";
+            toast.error(message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return { resetPassword, loading };
+};

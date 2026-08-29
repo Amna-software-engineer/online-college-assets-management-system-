@@ -13,6 +13,7 @@ import PrincipalDepartments from "./pages/principal/PrincipalDepartments";
 import HodInfoPage from "./pages/HOD/HodInfo";
 import PrincipalRequest from "./pages/principal/PrincipalRequest";
 import PrincipalReports from "./pages/principal/PrincipalReports";
+import ResetPassword from "./components/ResetPassword";
 
 
 const router = createBrowserRouter([
@@ -74,6 +75,9 @@ const router = createBrowserRouter([
   },{
     path: "/hod-info",
     element:<HodInfoPage/>
+  },{
+    path: "/reset-password",
+    element:<ResetPassword/>
   }
 ])
 
