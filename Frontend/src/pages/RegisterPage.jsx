@@ -15,7 +15,8 @@ const RegisterPage = () => {
     email: "",
     password: "",
     role: "",
-    department: ""
+    department: "",
+    status: "Blocked"
   });
   useEffect(() => {
     (async () => {

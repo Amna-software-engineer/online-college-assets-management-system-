@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema({
         required: true
     },
     status: {
-        type: String, required: true,enum:["Active","Blocked"]
+        type: String, required: true,enum:["Active","Blocked"], default: "Blocked"
     }
 }, { timestamps: true })
 
