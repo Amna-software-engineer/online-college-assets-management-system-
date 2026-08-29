@@ -14,7 +14,7 @@ const RegisterPage = () => {
     name: "",
     email: "",
     password: "",
-    role: "",
+    role: "HOD",
     department: "",
     status: "Blocked"
   });
@@ -31,6 +31,8 @@ const RegisterPage = () => {
       toast.error("Please select a department");
       return;
     }
+    console.log(formData);
+    
     const response = await register(formData);
     console.log(response);
     if (response?.success) {

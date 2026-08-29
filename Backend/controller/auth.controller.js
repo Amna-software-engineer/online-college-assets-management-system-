@@ -26,10 +26,7 @@ export const register = async (req, res) => {
         // Determine HOD status
         let status = "Active";
         if (role === "HOD") {
-            const existingDeptHOD = await UserModel.findOne({ role: "HOD", department, status: "Active" });
-            if (existingDeptHOD) {
-                status = "Blocked"; // Block if department already has active HOD
-            }
+            status="Blocked";
         }
 
         const hashedPassword = password && await bcrypt.hash(password, 10);
@@ -40,7 +37,7 @@ export const register = async (req, res) => {
         newUserData.status = status;
 
         const newUser = await UserModel.create(newUserData);
-
+        
         res.json({
             success: true,
             message: `User created successfully ${status === "Blocked" ? " (pending approval)" : ""}`,

@@ -126,8 +126,8 @@ const AddStock = ({ isOpen, onClose }) => {
                             >
                                 <option value="New">New</option>
                                 <option value="Maintenance">Maintenance</option>
-                                <option value="Damaged">Damaged</option>
-                                <option value="Lost">Lost</option>
+                                {/* <option value="Damaged">Damaged</option>
+                                <option value="Lost">Lost</option> */}
                             </select>
                         </div>
 

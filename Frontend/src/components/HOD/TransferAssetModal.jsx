@@ -108,7 +108,7 @@ const TransferAssetModal = ({ isOpen, onClose, asset, deptTransfer }) => {
           <div className="space-y-2">
             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Asset Status</label>
             <div className="grid grid-cols-2 gap-2">
-              {["New", "Maintenance", "Damaged", "Lost"].map((cond) => (
+              {["New", "Maintenance"].map((cond) => (
                 <button
                   key={cond}
                   type="button"

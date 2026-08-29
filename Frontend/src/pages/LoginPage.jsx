@@ -29,6 +29,8 @@ const LoginForm = () => {
                 navigate("/principal/dashboard");
                   await Promise.all([ getAssets(),  getRequests(),  getFaculty(), getDepts()])
             } else if (response?.user?.role === "HOD") {
+                console.log("response.user.status ",response.user.status);
+                
                    response?.user?.status ==="Blocked" ? navigate("/hod-info"):  navigate("/hod/dashboard");
                await Promise.all([ getAssets(),  getRequests(),  getFaculty(),getDepts()])
                 
