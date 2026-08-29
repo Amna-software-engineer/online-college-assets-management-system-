@@ -146,7 +146,7 @@ export const sendHODSetupEmail = async (req, res) => {
             }
         });
 
-        const resetLink = `http://localhost:5173/reset-password?token=${token}`;
+        const resetLink = `https://online-college-assets-management-system.vercel.app/reset-password?token=${token}`;
 
        const test= await transporter.sendMail({
             from: process.env.EMAIL,
