@@ -34,7 +34,7 @@ const PrincipalDashboard = () => {
       }).format(totalAssetsValue), icon: <DollarSign className="text-blue-600" />, bg: 'bg-blue-50'
     },
     { label: 'Maintenance', value: Math.round(MaintenanceHealth) + '%', icon: <Settings className="text-orange-600" />, bg: 'bg-orange-50' },
-    { label: 'Pending Requests', value: requestList?.length || 0, icon: <ClipboardList className="text-red-600" />, bg: 'bg-red-50' },
+    { label: 'Pending Requests', value: requestList?.filter(req=> req?.status==="Pending").length || 0, icon: <ClipboardList className="text-red-600" />, bg: 'bg-red-50' },
     { label: 'Total Faculty', value: facultyList?.filter(f => f.role === "Faculty").length || 0, icon: <Users className="text-indigo-600" />, bg: 'bg-indigo-50' },
   ];
 
