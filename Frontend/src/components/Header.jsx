@@ -30,10 +30,10 @@ const Header = ({onMenuClick}) => {
 
         {/* Right Side: Icons & Profile */}
         <div className="flex items-center gap-2 md:gap-6">
-          <button className="relative p-1">
-            {/* <Bell size={20} md:size={22} strokeWidth={2.5} /> */}
+          {/* <button className="relative p-1">
+            <Bell size={20} md:size={22} strokeWidth={2.5} /> 
             <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-[#008BA9]"></span>
-          </button>
+          </button> */}
           
           <div className="flex items-center gap-3">
             <div className="text-right leading-tight hidden sm:block">
